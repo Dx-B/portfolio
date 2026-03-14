@@ -5,7 +5,11 @@ export default function Home() {
     <div>
       <body>
         <header>
-          <h1>I'm a header!</h1>
+          <div className="">
+            <h1>
+              Header!
+            </h1>
+          </div>
         </header>
         <div>
           <h1>Hello!</h1>
