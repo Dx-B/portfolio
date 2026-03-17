@@ -80,10 +80,6 @@ export default function Home() {
           </footer>
         </div>
       </section>
-
-      <section className="flex h-screen w-full items-center justify-center bg-gray-400" />
-
-      <section className="flex h-screen w-full items-center justify-center bg-gray-300" />
     </main>
   );
 }
