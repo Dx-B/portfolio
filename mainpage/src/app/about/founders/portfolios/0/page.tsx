@@ -1,115 +1,9 @@
 "use client";
 
 import Header from "@/app/components/Header";
-import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import {
-  motion,
-  AnimatePresence,
-  useReducedMotion,
-} from "framer-motion";
-
-type Item = {
-  title: string;
-  description: string;
-  color: string;
-  href?: string;
-};
-
-type Position = "left" | "center" | "right";
-
-type CarouselProps = {
-  left: Item;
-  center: Item;
-  right: Item;
-  rotate: (dir: number) => void;
-  onInteract: () => void;
-};
-
-type MotionCarouselProps = CarouselProps & {
-  isMobile: boolean;
-};
-
-const items: Item[] = [
-  { title: "AWS", description: "Cloud infrastructure & deployment", color: "from-orange-500 to-yellow-500" },
-  { title: "Java", description: "Backend systems & OOP", color: "from-red-500 to-rose-500" },
-  { title: "Python", description: "AI, data & automation", color: "from-blue-500 to-cyan-500" },
-  { title: "Node.js", description: "Full-stack JavaScript runtime", color: "from-green-500 to-emerald-500" },
-  { title: "TypeScript", description: "Strongly typed JavaScript", color: "from-indigo-500 to-blue-500" },
-];
+import Carousel from "@/app/components/Carousel";
 
 export default function Home() {
-  const [current, setCurrent] = useState(0);
-  const [pausedUntil, setPausedUntil] = useState(0);
-  const [mounted, setMounted] = useState(false);
-  const [useMotion, setUseMotion] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  const router = useRouter();
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const shouldReduceMotion = useReducedMotion();
-
-  const getIndex = (i: number) => (i + items.length) % items.length;
-
-  const left = items[getIndex(current - 1)];
-  const center = items[getIndex(current)];
-  const right = items[getIndex(current + 1)];
-
-  const rotate = (dir: number) => {
-    setCurrent((prev) => getIndex(prev + dir));
-  };
-
-  const handleInteract = () => {
-    setPausedUntil(Date.now() + 8000);
-  };
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setIsMobile(window.innerWidth < 768);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-
-    const lowEnd =
-      typeof navigator !== "undefined" &&
-      ((navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) ||
-        ((navigator as any).deviceMemory ?? 8) <= 4);
-
-    if (!shouldReduceMotion && !lowEnd) {
-      setUseMotion(true);
-    }
-  }, [mounted, shouldReduceMotion]);
-
-  useEffect(() => {
-    if (!mounted) return;
-
-    intervalRef.current = setInterval(() => {
-      if (Date.now() < pausedUntil) return;
-      rotate(1);
-    }, 3500); // slower rotation
-
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [mounted, pausedUntil]);
-
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      handleInteract();
-      if (e.key === "ArrowRight") rotate(1);
-      if (e.key === "ArrowLeft") rotate(-1);
-    };
-
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, []);
-
   return (
     <main>
       <Header />
@@ -129,52 +23,13 @@ export default function Home() {
             What's on your mind?
           </h1>
 
-          <div className="mt-14 flex flex-col items-center select-none">
-            {useMotion ? (
-              <MotionCarousel
-                left={left}
-                center={center}
-                right={right}
-                rotate={rotate}
-                isMobile={isMobile}
-                onInteract={handleInteract}
-              />
-            ) : (
-              <StaticCarousel
-                left={left}
-                center={center}
-                right={right}
-                rotate={rotate}
-                onInteract={handleInteract}
-              />
-            )}
-
-            <div className="mt-8 flex gap-4">
-              <button
-                onClick={() => {
-                  handleInteract();
-                  rotate(-1);
-                }}
-                className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur transition"
-              >
-                ←
-              </button>
-              <button
-                onClick={() => {
-                  handleInteract();
-                  rotate(1);
-                }}
-                className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur transition"
-              >
-                →
-              </button>
-            </div>
-          </div>
+          {/* 👇 Carousel moved to component */}
+          <Carousel />
 
           <div className="flex-10" />
 
           <footer className="flex justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-double-down" viewBox="0 0 16 16">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
               <path fillRule="evenodd" d="M1.646 6.646a.5.5 0 0 1 .708 0L8 12.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
               <path fillRule="evenodd" d="M1.646 2.646a.5.5 0 0 1 .708 0L8 8.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
             </svg>
@@ -193,140 +48,43 @@ export default function Home() {
             </p>
           </div>
         </div>
+
+        <div className="flex justify-center">
+          <div className="h-[80vh] bg-white/25 dark:bg-black/5 m-[4vh] p-[2vh] rounded-xl space-y-3">
+            
+            <div className="h-full flex-col flex space-y-3">
+              <h1 className="text-5xl font-bold">What's up?</h1>
+              <div className="bg-white/10 backdrop-blur-sm flex-1 m-[1vh] rounded-lg p-[2vh] flex flex-col justify-center relative items-center">
+                <p className="font-semibold text-sm text-gray-400">
+                Ask me anything. I'll be happy to help.
+                </p>
+                
+                <div className="flex flex-col space-y-2 bottom-4 absolute">
+                  <div className="grid grid-cols-4 space-x-2">
+                    <button className="px-2 outline outline-white bg-black rounded-lg">
+                      Hello!
+                    </button>
+                    <button className="px-2 outline outline-white bg-black rounded-lg">
+                      Hello!
+                    </button>
+                    <button className="px-2 outline outline-white bg-black rounded-lg">
+                      Hello!
+                    </button>
+                    <button className="px-2 outline outline-white bg-black rounded-lg">
+                      Hello!
+                    </button>
+                  </div>
+
+                  <div className="p-2 bg-black outline outline-white rounded-2xl">
+                    <h1>Ask me anything about Billy</h1>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </main>
-  );
-}
-
-function StaticCarousel({ left, center, right, rotate, onInteract }: CarouselProps) {
-  return (
-    <div className="relative w-[90vw] max-w-[500px] h-[220px] flex items-center justify-center">
-      <Card item={left} position="left" onClick={() => { onInteract(); rotate(-1); }} />
-      <Card item={center} position="center" />
-      <Card item={right} position="right" onClick={() => { onInteract(); rotate(1); }} />
-    </div>
-  );
-}
-
-function MotionCarousel({
-  left,
-  center,
-  right,
-  rotate,
-  isMobile,
-  onInteract,
-}: MotionCarouselProps) {
-  const [track, setTrack] = useState([
-    { slot: "left" as Position, item: left },
-    { slot: "center" as Position, item: center },
-    { slot: "right" as Position, item: right },
-  ]);
-  const [isAnimating, setIsAnimating] = useState(false);
-
-  useEffect(() => {
-    if (!isAnimating) {
-      setTrack([
-        { slot: "left", item: left },
-        { slot: "center", item: center },
-        { slot: "right", item: right },
-      ]);
-    }
-  }, [left, center, right, isAnimating]);
-
-  const positionStyles = {
-    left: { x: -160, scale: 0.8, opacity: 0.5, zIndex: 1 },
-    center: { x: 0, scale: 1, opacity: 1, zIndex: 10 },
-    right: { x: 160, scale: 0.8, opacity: 0.5, zIndex: 1 },
-  };
-
-  const rotateLocal = (dir: number) => {
-    if (isAnimating) return;
-
-    onInteract();
-    setIsAnimating(true);
-
-    setTrack((prev) => {
-      if (dir === 1) {
-        return [
-          { ...prev[0], slot: "center" },
-          { ...prev[1], slot: "right" },
-          { ...prev[2], slot: "left" },
-        ];
-      }
-
-      return [
-        { ...prev[0], slot: "right" },
-        { ...prev[1], slot: "left" },
-        { ...prev[2], slot: "center" },
-      ];
-    });
-
-    window.setTimeout(() => {
-      rotate(dir);
-      setIsAnimating(false);
-    }, 400);
-  };
-
-  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    const threshold = 50;
-    if (info.offset.x < -threshold) rotateLocal(1);
-    else if (info.offset.x > threshold) rotateLocal(-1);
-  };
-
-  return (
-    <div className="relative w-[90vw] max-w-[500px] h-[220px] flex items-center justify-center overflow-hidden">
-      {track.map(({ slot, item }) => (
-        <motion.div
-          key={item.title}
-          animate={slot}
-          variants={positionStyles}
-          transition={{ duration: 0.4, ease: "easeInOut" }}
-          className="absolute"
-          drag={isMobile ? "x" : false}
-          dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={0.15}
-          onDragEnd={handleDragEnd}
-          onClick={
-            slot === "left"
-              ? () => rotateLocal(-1)
-              : slot === "right"
-              ? () => rotateLocal(1)
-              : undefined
-          }
-        >
-          <Card item={item} position={slot} />
-        </motion.div>
-      ))}
-    </div>
-  );
-}
-
-function Card({
-  item,
-  position,
-  onClick,
-}: {
-  item: Item;
-  position: Position;
-  onClick?: () => void;
-}) {
-  return (
-    <div
-      onClick={onClick}
-      className="w-40 h-40 rounded-2xl text-white flex flex-col justify-center items-center text-center px-4 cursor-pointer bg-gradient-to-br backdrop-blur-lg shadow-xl overflow-hidden"
-      style={{
-        transform:
-          position === "center"
-            ? "scale(1)"
-            : "scale(0.8)",
-        opacity: position === "center" ? 1 : 0.6,
-      }}
-    >
-      <div className={`absolute inset-0 bg-gradient-to-br ${item.color}`} />
-      <div className="relative z-10">
-        <h2 className="font-semibold text-lg">{item.title}</h2>
-        <p className="text-xs opacity-90 mt-1">{item.description}</p>
-      </div>
-    </div>
   );
 }
