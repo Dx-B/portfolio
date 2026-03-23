@@ -6,7 +6,7 @@ export default function Hero() {
       <div className="flex-3" />
 
       <h1 className="text-3xl font-semibold text-shadow-[0_0_12px_rgba(255,255,255,0.3)]">
-        What's on your mind?
+        What&apos;s on your mind?
       </h1>
 
       <Carousel />
