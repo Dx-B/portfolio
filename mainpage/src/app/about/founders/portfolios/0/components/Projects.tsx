@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { GlassCard } from "./GlassCard";
 import { GradientTitle } from "./GradientTitle";
+import Image from "next/image";
 
 type Project = {
   title: string;
@@ -95,11 +96,7 @@ export function Projects() {
 
               {/* IMAGE */}
               <div className="relative w-full h-44 overflow-hidden">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-full h-full object-cover"
-                />
+                <Image width={500} height={500} src={project.image} alt={project.title} className="w-full h-full object-cover"/>
                 <div className="absolute inset-0 bg-black/20" />
               </div>
 
