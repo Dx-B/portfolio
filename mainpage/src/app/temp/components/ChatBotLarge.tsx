@@ -307,7 +307,7 @@ function VariantB({ messages, input, isLoading, provider, chatRef, setInput, set
                   <div className={`max-w-[75%] text-sm leading-7 ${
                     msg.role === "user"
                       ? "rounded-xl bg-white/5 px-4 py-2.5 text-white/80"
-                      : "border-l-2 border-white/15 pl-4 text-white/60"
+                      : "relative pl-4 text-white/60 before:absolute before:left-0 before:top-0 before:h-full before:w-0.5 before:rounded-full before:bg-linear-to-b before:from-indigo-400 before:via-purple-500 before:to-pink-500"
                   }`}>
                     {!msg.content ? (
                       <span className="inline-flex gap-1 text-white/30">
@@ -327,13 +327,13 @@ function VariantB({ messages, input, isLoading, provider, chatRef, setInput, set
       </div>
 
       {/* Quick prompts + bare input */}
-      <div className="mt-8 space-y-4 border-t border-white/6 pt-6">
+      <div className="mt-8 space-y-8 border-t border-white/6 pt-6">
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
           {QUICK_PROMPTS.map((item) => (
             <button key={item.label}
               onClick={() => sendMessage(item.message)}
               disabled={isLoading}
-              className="text-sm text-white/45 transition hover:text-white/70 disabled:opacity-40">
+              className="text-sm cursor-pointer text-white/45 transition outline-1 rounded-md py-1 px-2 hover:text-white/70 disabled:opacity-40">
               {item.label}
             </button>
           ))}
