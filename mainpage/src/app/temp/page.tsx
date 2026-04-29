@@ -67,7 +67,7 @@ export default function Home() {
                       bg-white/60
                     "
                   >
-                    Get Started
+                    Get Started Um
                   </button>
                 </Link>
                 
