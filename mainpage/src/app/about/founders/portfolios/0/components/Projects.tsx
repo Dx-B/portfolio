@@ -79,7 +79,7 @@ export function Projects() {
   };
 
   return (
-    <div className="space-y-4 m-4">
+    <div id="projects" className="space-y-4 m-4">
 
       <GradientTitle>Projects</GradientTitle>
 

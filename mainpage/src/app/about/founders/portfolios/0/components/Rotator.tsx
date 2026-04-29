@@ -19,7 +19,7 @@ export default function Rotator() {
   return (
     <h3 className="text-2xl font-bold flex items-center gap-2">
       
-      <span className="text-gray-300">I am a</span>
+      <span className="text-white/92 text-shadow-[0_0_12px_rgba(255,255,255,0.16)]">I am a</span>
 
       <span className="relative inline-block min-w-55">
         <AnimatePresence mode="wait">

@@ -107,7 +107,7 @@ export default function PassionSection() {
               </div>
 
               <div className="grid gap-3 sm:min-w-[210px]">
-                <button className="group rounded-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 px-5 py-3 text-sm font-medium text-white transition duration-300 hover:scale-[1.01] hover:shadow-[0_0_28px_rgba(120,80,255,0.2)]">
+                <button className="group rounded-xl bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500 px-5 py-3 text-sm font-medium text-white transition duration-300 hover:scale-[1.01] hover:shadow-[0_0_28px_rgba(120,80,255,0.2)]">
                   <span className="inline-flex items-center gap-2">
                     Let&apos;s Chat
                     <span className="transition-transform duration-300 group-hover:translate-x-1">

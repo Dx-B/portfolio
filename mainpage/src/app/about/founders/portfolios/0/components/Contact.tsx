@@ -26,7 +26,7 @@ export function Contact() {
   }
 
   return (
-    <section className="m-4 space-y-4">
+    <section id="contact" className="m-4 space-y-4">
       <GradientTitle>Contact</GradientTitle>
 
       <GlassCard className="relative overflow-hidden rounded-[28px] border border-white/8 bg-white/[0.02] p-5 md:p-6">

@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DxB Portfolio Website",
-  description: "Built using NextJS and Tailwind CSS. Enjoy!",
+  title: "Billy Zhang | Full-Stack Developer",
+  description: "Full-stack developer specializing in AI-powered web experiences. Next.js, React, TypeScript.",
 };
 
 export default function RootLayout({
@@ -25,8 +25,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
+        <Analytics />
       </body>
     </html>
   );
