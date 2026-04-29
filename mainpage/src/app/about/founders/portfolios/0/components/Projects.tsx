@@ -23,7 +23,7 @@ const projects: Project[] = [
       "Streaming architecture with memory persistence and low-latency response handling for AI workloads.",
     stack: ["Next.js", "OpenAI", "Streaming API"],
     category: "AI",
-    image: "/projects/ai-chat.jpg",
+    image: "/projects/aichat.jpg",
     featured: true,
   },
   {
@@ -52,7 +52,7 @@ const projects: Project[] = [
       "Conversion-focused UX with optimized checkout flow and component-driven architecture.",
     stack: ["Next.js", "Stripe"],
     category: "Backend",
-    image: "/projects/ecommerce.jpg",
+    image: "/projects/hero.jpg",
   },
 ];
 
