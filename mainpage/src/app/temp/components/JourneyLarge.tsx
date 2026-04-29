@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 
 type Stop = {
@@ -150,7 +150,7 @@ function DesktopStop({ item, index }: { item: Stop; index: number }) {
   );
 }
 
-function DesktopConstellation({ scrollProgress }: { scrollProgress: ReturnType<typeof useTransform> }) {
+function DesktopConstellation({ scrollProgress }: { scrollProgress: MotionValue<number> }) {
   return (
     <div className="relative min-h-[1100px] md:min-h-[1200px]">
       <svg className="pointer-events-none absolute inset-0 h-full w-full"
