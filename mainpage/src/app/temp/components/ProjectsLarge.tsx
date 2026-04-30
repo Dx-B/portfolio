@@ -16,6 +16,7 @@ type FeaturedProject = {
   year: string;
   effect: EffectType;
   breakdown: Breakdown[];
+  link?: string;
 };
 
 type Project = {
@@ -31,7 +32,7 @@ const FEATURED: FeaturedProject[] = [
     title: "AI Chat Platform",
     tagline: "Real-time streaming AI chat",
     description: "Production-grade chat with streaming responses, memory persistence, and low-latency AI workloads.",
-    category: "AI", year: "2025", effect: "chat",
+    category: "AI", year: "2025", effect: "chat", link: "#",
     breakdown: [
       { label: "Frontend",   description: "Streaming UI with optimistic updates and real-time token rendering.",       stack: ["Next.js", "React", "Tailwind"] },
       { label: "Middleware", description: "Auth layer, rate limiting, and session token management.",                   stack: ["Next.js API", "JWT", "Redis"] },
@@ -42,7 +43,7 @@ const FEATURED: FeaturedProject[] = [
     title: "CNN Classifier",
     tagline: "Image recognition · PyTorch",
     description: "Convolutional neural network trained on CIFAR-10. Multi-class image classification with 92% test accuracy.",
-    category: "AI", year: "2024", effect: "cnn",
+    category: "AI", year: "2024", effect: "cnn", link: "#",
     breakdown: [
       { label: "Model",     description: "5-layer CNN with batch normalization, dropout regularization, and ReLU activations.",  stack: ["PyTorch", "CUDA", "Python"] },
       { label: "Training",  description: "Trained on CIFAR-10 with data augmentation and cosine annealing scheduler.",           stack: ["Weights & Biases", "NumPy", "Matplotlib"] },
@@ -53,7 +54,7 @@ const FEATURED: FeaturedProject[] = [
     title: "Discord Music Bot",
     tagline: "Serving 200+ concurrent users",
     description: "Python Discord bot with real-time audio streaming, Spotify/YouTube queue management, and slash commands.",
-    category: "Backend", year: "2023", effect: "discord",
+    category: "Backend", year: "2023", effect: "discord", link: "#",
     breakdown: [
       { label: "Bot Core", description: "discord.py async command framework with voice channel and event handling.",    stack: ["Python", "discord.py", "asyncio"] },
       { label: "Audio",    description: "Source extraction, FFmpeg transcoding, and a queue state machine.",            stack: ["yt-dlp", "FFmpeg", "Lavalink"] },
@@ -221,10 +222,13 @@ type DiscordMsg =
   | { kind: "embed"; borderColor: string; title: string; songTitle: string; fields: { label: string; value: string }[] };
 
 const DISCORD_FEED: DiscordMsg[] = [
-  { kind: "user",  avatar: "B", avatarBg: "#5865F2", name: "billyzhang", nameColor: "#c9b4f8", text: "!play Still D.R.E." },
+  { kind: "user",  avatar: "B", avatarBg: "#5865F2", name: "DxB", nameColor: "#c9b4f8", text: "!play Still D.R.E." },
   { kind: "embed", borderColor: "#5865F2", title: "Added to Queue", songTitle: "Still D.R.E. — Dr. Dre",
     fields: [{ label: "Duration", value: "4:01" }, { label: "Position", value: "#1" }] },
-  { kind: "user",  avatar: "K", avatarBg: "#ED4245", name: "karan_09", nameColor: "#f8a97f", text: "!nowplaying" },
+    { kind: "user",  avatar: "T", avatarBg: "#586542", name: "TRS", nameColor: "#586542", text: "Now Playing Still D.R.E.!" },
+  { kind: "embed", borderColor: "#5865F2", title: "Added to Queue", songTitle: "Still D.R.E. — Dr. Dre",
+    fields: [{ label: "Duration", value: "4:01" }, { label: "Position", value: "#1" }] },
+  { kind: "user",  avatar: "K", avatarBg: "#ED4245", name: "Kal", nameColor: "#f8a97f", text: "!nowplaying" },
   { kind: "embed", borderColor: "#57F287", title: "Now Playing", songTitle: "Still D.R.E. — Dr. Dre",
     fields: [{ label: "Progress", value: "1:23 / 4:01" }, { label: "Queue", value: "3 left" }] },
 ];
@@ -287,16 +291,16 @@ function DiscordEffect({ isCenter }: { isCenter: boolean }) {
                   transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
                 />
               </div>
-              <span className="truncate text-[9px]" style={{ color: "#B5BAC1" }}>billyzhang</span>
+              <span className="truncate text-[9px]" style={{ color: "#B5BAC1" }}>DxB</span>
             </div>
 
             {/* Octave BOT */}
             <div className="flex items-center gap-1.5">
               <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[7px] font-bold text-white"
-                style={{ background: "#5865F2" }}>
+                style={{ background: "#586542" }}>
                 O
               </div>
-              <span className="truncate text-[9px]" style={{ color: "#B5BAC1" }}>Octave</span>
+              <span className="truncate text-[9px]" style={{ color: "#B5BAC1" }}>TRS</span>
               <span className="ml-auto shrink-0 rounded px-0.5 py-px text-[6px] font-bold uppercase text-white"
                 style={{ background: "#5865F2" }}>
                 BOT
@@ -516,12 +520,100 @@ function FeaturedBorder({ uid }: { uid: string }) {
   );
 }
 
+// ── Shared card renderer ──────────────────────────────────────────────────────
+function CarouselCard({
+  p, isCenter, onClick,
+}: {
+  p: FeaturedProject; isCenter: boolean; onClick: () => void;
+}) {
+  return (
+    <button onClick={onClick} className="group w-full text-left"
+      aria-label={isCenter ? `View ${p.title} breakdown` : `Go to ${p.title}`}>
+      <div className="relative">
+        <AnimatePresence>
+          {isCenter && (
+            <motion.div key="border"
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}>
+              <FeaturedBorder uid={p.title.replace(/\s+/g, "")} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <div className={`relative flex h-96 flex-col overflow-hidden rounded-2xl border bg-[#0f0f0f] md:h-104 ${
+          isCenter ? "border-white/6" : "border-white/4"
+        }`}>
+          <div className="relative h-52 shrink-0 overflow-hidden md:h-60">
+            {p.effect === "chat"    && <ChatEffect    isCenter={isCenter} />}
+            {p.effect === "cnn"     && <CNNEffect     isCenter={isCenter} />}
+            {p.effect === "discord" && <DiscordEffect isCenter={isCenter} />}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-linear-to-b from-transparent to-[#0f0f0f]" />
+          </div>
+          <div className="flex flex-1 flex-col px-5 pb-5 md:px-6 md:pb-6">
+            <p className={`mb-2 text-[10px] uppercase tracking-[0.22em] bg-linear-to-r ${GRADIENT[p.category] ?? "from-white/30 to-white/15"} bg-clip-text text-transparent`}>
+              {p.category}
+            </p>
+            <h3 className={`font-semibold text-white/90 ${isCenter ? "text-lg md:text-xl" : "text-base"}`}>
+              {p.title}
+            </h3>
+            <p className={`mt-1 text-[11px] uppercase tracking-[0.18em] ${isCenter ? "text-white/30" : "text-white/20"}`}>
+              {p.tagline}
+            </p>
+            {isCenter && (
+              <p className="mt-2 text-sm leading-6 text-white/40 line-clamp-2">{p.description}</p>
+            )}
+            <div className="mt-auto flex items-center justify-between pt-2">
+              <span className="text-[10px] uppercase tracking-[0.18em] text-white/20">{p.year}</span>
+              {isCenter && (
+                <span className="text-xs text-white/25 transition-colors group-hover:text-white/60">
+                  View breakdown →
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </button>
+  );
+}
+
 // ── Carousel ──────────────────────────────────────────────────────────────────
 function Carousel({
-  active, onPrev, onNext, onSelect,
+  active, onPrev, onNext, onSelect, onGoTo,
 }: {
-  active: number; onPrev: () => void; onNext: () => void; onSelect: () => void;
+  active: number;
+  onPrev: () => void;
+  onNext: () => void;
+  onSelect: () => void;
+  onGoTo: (i: number) => void;
 }) {
+  // ── Mobile: measure container to drive pixel-exact peek translation ──
+  const mobileRef = useRef<HTMLDivElement>(null);
+  const [cw, setCw] = useState(0);
+
+  useEffect(() => {
+    const el = mobileRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setCw(el.clientWidth));
+    ro.observe(el);
+    setCw(el.clientWidth);
+    return () => ro.disconnect();
+  }, []);
+
+  const PEEK = 0.07;   // fraction visible on each side
+  const GAP  = 12;     // px between cards
+  const cardW = cw * (1 - PEEK * 2);
+  const trackX = (i: number) => cw * PEEK - i * (cardW + GAP);
+
+  // Touch swipe
+  const touchStartX = useRef(0);
+  const handleTouchStart = (e: React.TouchEvent) => { touchStartX.current = e.touches[0].clientX; };
+  const handleTouchEnd   = (e: React.TouchEvent) => {
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    if (dx < -40) onNext();
+    else if (dx > 40) onPrev();
+  };
+
+  // ── Desktop: reordered [prev, center, next] ──
   const ordered = [
     FEATURED[(active - 1 + 3) % 3],
     FEATURED[active],
@@ -529,119 +621,140 @@ function Carousel({
   ];
 
   return (
-    <div className="relative">
-      <div className="grid grid-cols-3 items-center gap-3 md:gap-5">
-        {ordered.map((p, slotIdx) => {
-          const isCenter = slotIdx === 1;
-          return (
-            <motion.div
-              key={p.title}
-              layout
-              animate={{ scale: isCenter ? 1 : 0.82, opacity: isCenter ? 1 : 0.38 }}
-              transition={{ duration: 0.45, ease: [0.32, 0.72, 0, 1] }}
-              className="origin-center"
-            >
-              <button
-                onClick={() => {
-                  if (isCenter)          onSelect();
-                  else if (slotIdx === 2) onNext();
-                  else                   onPrev();
-                }}
-                className="group w-full text-left"
-                aria-label={isCenter ? `View ${p.title} breakdown` : `Go to ${p.title}`}
-              >
-                <div className="relative">
-                  {/* Gradient border — center card only */}
-                  <AnimatePresence>
-                    {isCenter && (
-                      <motion.div key="border"
-                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <FeaturedBorder uid={p.title.replace(/\s+/g, "")} />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* Card */}
-                  <div className={`relative flex h-[24rem] flex-col overflow-hidden rounded-2xl border bg-[#0f0f0f] md:h-[26rem] ${
-                    isCenter ? "border-white/6" : "border-white/4"
-                  }`}>
-
-                    {/* Live effect strip */}
-                    <div className="relative h-52 shrink-0 overflow-hidden md:h-60">
-                      {p.effect === "chat"    && <ChatEffect    isCenter={isCenter} />}
-                      {p.effect === "cnn"     && <CNNEffect     isCenter={isCenter} />}
-                      {p.effect === "discord" && <DiscordEffect isCenter={isCenter} />}
-                      {/* Fade into card bg */}
-                      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-linear-to-b from-transparent to-[#0f0f0f]" />
-                    </div>
-
-                    {/* Text content */}
-                    <div className="flex flex-1 flex-col px-5 pb-5 md:px-6 md:pb-6">
-                      <p className={`mb-2 text-[10px] uppercase tracking-[0.22em] bg-linear-to-r ${GRADIENT[p.category] ?? "from-white/30 to-white/15"} bg-clip-text text-transparent`}>
-                        {p.category}
-                      </p>
-                      <h3 className={`font-semibold text-white/90 ${isCenter ? "text-lg md:text-xl" : "text-base"}`}>
-                        {p.title}
-                      </h3>
-                      <p className={`mt-1 text-[11px] uppercase tracking-[0.18em] ${isCenter ? "text-white/30" : "text-white/20"}`}>
-                        {p.tagline}
-                      </p>
-                      {isCenter && (
-                        <p className="mt-2 text-sm leading-6 text-white/40 line-clamp-2">
-                          {p.description}
-                        </p>
-                      )}
-                      <div className="mt-auto pt-2 flex items-center justify-between">
-                        <span className="text-[10px] uppercase tracking-[0.18em] text-white/20">{p.year}</span>
-                        {isCenter && (
-                          <span className="text-xs text-white/25 transition-colors group-hover:text-white/60">
-                            View breakdown →
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </button>
-            </motion.div>
-          );
-        })}
-      </div>
-
-      {/* Arrows at column boundaries */}
-      <div className="pointer-events-none absolute inset-0 flex items-center">
-        <div className="flex w-1/3 justify-end pr-3">
-          <button onClick={onPrev}
-            className="pointer-events-auto flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-[#0d0d0d] text-white/40 transition hover:border-white/25 hover:text-white/70"
-            aria-label="Previous">
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-        </div>
-        <div className="w-1/3" />
-        <div className="flex w-1/3 justify-start pl-3">
-          <button onClick={onNext}
-            className="pointer-events-auto flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-[#0d0d0d] text-white/40 transition hover:border-white/25 hover:text-white/70"
-            aria-label="Next">
-            <ChevronRight className="h-4 w-4" />
-          </button>
-        </div>
-      </div>
-
-      {/* Dot indicators */}
-      <div className="mt-5 flex justify-center gap-2">
-        {FEATURED.map((_, i) => (
-          <button key={i}
-            onClick={() => {
-              if (i === active) return;
-              const diff = (i - active + 3) % 3;
-              if (diff === 1) onNext(); else onPrev();
+    <div>
+      {/* ════════════════════════════════════════
+          MOBILE — single-card peek carousel
+          ════════════════════════════════════════ */}
+      <div className="md:hidden">
+        <div
+          ref={mobileRef}
+          className="relative overflow-hidden"
+          style={{ touchAction: "pan-y" }}
+        >
+          {/* Sliding track */}
+          <div
+            className="flex"
+            style={{
+              transform: cw > 0 ? `translateX(${trackX(active)}px)` : undefined,
+              transition: "transform 0.42s cubic-bezier(0.32, 0.72, 0, 1)",
+              gap: `${GAP}px`,
+              willChange: "transform",
             }}
-            className={`h-1 rounded-full transition-all duration-300 ${i === active ? "w-5 bg-white/50" : "w-1 bg-white/20"}`}
-            aria-label={`Go to ${FEATURED[i].title}`}
-          />
-        ))}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
+            {FEATURED.map((p, idx) => {
+              const isCenter = idx === active;
+              return (
+                <div
+                  key={p.title}
+                  className="shrink-0"
+                  style={{ width: cw > 0 ? `${cardW}px` : "86%" }}
+                >
+                  <CarouselCard
+                    p={p}
+                    isCenter={isCenter}
+                    onClick={() => isCenter ? onSelect() : onGoTo(idx)}
+                  />
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Left arrow — sits in the peek gap, large and blatant */}
+          <button
+            onClick={onPrev}
+            className="absolute left-1 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/70 text-white/90 backdrop-blur-sm transition-colors active:bg-black/90"
+            aria-label="Previous"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+
+          {/* Right arrow */}
+          <button
+            onClick={onNext}
+            className="absolute right-1 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/70 text-white/90 backdrop-blur-sm transition-colors active:bg-black/90"
+            aria-label="Next"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Mobile dots */}
+        <div className="mt-4 flex items-center justify-center gap-2">
+          {FEATURED.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => onGoTo(i)}
+              className={`rounded-full transition-all duration-300 ${
+                i === active ? "h-1.5 w-6 bg-white/60" : "h-1.5 w-1.5 bg-white/25"
+              }`}
+              aria-label={`Go to ${FEATURED[i].title}`}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* ════════════════════════════════════════
+          DESKTOP — 3-column scale carousel
+          ════════════════════════════════════════ */}
+      <div className="relative hidden md:block">
+        <div className="grid grid-cols-3 items-center gap-5">
+          {ordered.map((p, slotIdx) => {
+            const isCenter = slotIdx === 1;
+            return (
+              <motion.div
+                key={p.title}
+                layout
+                animate={{ scale: isCenter ? 1 : 0.82, opacity: isCenter ? 1 : 0.38 }}
+                transition={{ duration: 0.45, ease: [0.32, 0.72, 0, 1] }}
+                className="origin-center"
+              >
+                <CarouselCard
+                  p={p}
+                  isCenter={isCenter}
+                  onClick={() => {
+                    if (isCenter)           onSelect();
+                    else if (slotIdx === 2) onNext();
+                    else                   onPrev();
+                  }}
+                />
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* Desktop arrows */}
+        <div className="pointer-events-none absolute inset-0 flex items-center">
+          <div className="flex w-1/3 justify-end pr-3">
+            <button onClick={onPrev}
+              className="pointer-events-auto flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-[#0d0d0d] text-white/40 transition hover:border-white/25 hover:text-white/70"
+              aria-label="Previous">
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="w-1/3" />
+          <div className="flex w-1/3 justify-start pl-3">
+            <button onClick={onNext}
+              className="pointer-events-auto flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-[#0d0d0d] text-white/40 transition hover:border-white/25 hover:text-white/70"
+              aria-label="Next">
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Desktop dots */}
+        <div className="mt-5 flex justify-center gap-2">
+          {FEATURED.map((_, i) => (
+            <button key={i}
+              onClick={() => onGoTo(i)}
+              className={`h-1 rounded-full transition-all duration-300 ${
+                i === active ? "w-5 bg-white/50" : "w-1 bg-white/20"
+              }`}
+              aria-label={`Go to ${FEATURED[i].title}`}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -683,6 +796,32 @@ function BreakdownCards({ project }: { project: FeaturedProject }) {
           </motion.div>
         ))}
       </div>
+
+      {project.link && (
+        <motion.div
+          className="mt-8 flex justify-center"
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.35, ease: "easeOut", delay: 0.4 }}
+        >
+          <div className="group relative inline-flex rounded-xl p-px">
+            {/* Gradient border — dim at rest, vivid on hover */}
+            <div className="absolute inset-0 rounded-xl bg-linear-to-r from-indigo-400 via-purple-500 to-pink-500 opacity-15 transition-opacity duration-300 group-hover:opacity-100" />
+            {/* Ambient glow */}
+            <div className="absolute inset-0 rounded-xl bg-linear-to-r from-indigo-400 via-purple-500 to-pink-500 opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-30" />
+            {/* Button */}
+            <a
+              href={project.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative z-10 flex items-center gap-3 rounded-[11px] bg-[#0f0f0f] px-8 py-3 text-[11px] font-medium uppercase tracking-[0.22em] text-white/50 transition-colors duration-200 group-hover:text-white/95"
+            >
+              View project
+              <ChevronRight className="h-3.5 w-3.5 -rotate-45 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </a>
+          </div>
+        </motion.div>
+      )}
     </motion.div>
   );
 }
@@ -699,7 +838,7 @@ function ProjectList() {
           initial={{ opacity: 0, x: -12 }}
           animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.35, ease: "easeOut", delay: 0.08 * i }}
-          className="group flex items-center gap-6 py-5 transition-colors hover:bg-white/1.5 md:gap-10"
+          className="group cursor-pointer flex items-center gap-6 py-5 transition-colors hover:bg-white/1.5 md:gap-10"
         >
           <span className="w-7 shrink-0 text-right font-mono text-xs text-white/15">
             {String(i + 1).padStart(2, "0")}
@@ -718,7 +857,7 @@ function ProjectList() {
               ))}
             </div>
           </div>
-          <ChevronRight className="mr-3 h-5 w-5 shrink-0 -rotate-45 text-white/15 transition-colors group-hover:text-white/50 md:mr-5" />
+          <ChevronRight className="mr-3 h-5 w-5 shrink-0 text-white/15 transition-colors group-hover:text-white/50 md:mr-5" />
         </motion.div>
       ))}
     </div>
@@ -727,11 +866,12 @@ function ProjectList() {
 
 // ── Shell ─────────────────────────────────────────────────────────────────────
 export function ProjectsLarge() {
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(1); // CNN is index 1 — default center
   const breakdownRef        = useRef<HTMLDivElement>(null);
 
-  const prev = () => setActive((a) => (a - 1 + 3) % 3);
-  const next = () => setActive((a) => (a + 1) % 3);
+  const prev  = () => setActive((a) => (a - 1 + 3) % 3);
+  const next  = () => setActive((a) => (a + 1) % 3);
+  const goTo  = (i: number) => setActive(i);
 
   const handleSelect = () => {
     requestAnimationFrame(() => {
@@ -753,7 +893,7 @@ export function ProjectsLarge() {
           <span className="text-xs uppercase tracking-[0.2em] text-white/20">{PROJECTS.length} total</span>
         </div>
 
-        <Carousel active={active} onPrev={prev} onNext={next} onSelect={handleSelect} />
+        <Carousel active={active} onPrev={prev} onNext={next} onSelect={handleSelect} onGoTo={goTo} />
 
         <div ref={breakdownRef}>
           <AnimatePresence mode="wait">

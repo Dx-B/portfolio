@@ -221,9 +221,9 @@ export function TechStackLarge() {
     >
       <div className="mx-auto max-w-6xl">
         {/* Section header */}
-        <div className="mb-10 border-b border-white/[0.06] pb-6 flex items-end justify-between">
+        <div className="mb-10 border-b border-white/[0.06] pb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <h2 className="text-3xl font-bold text-white">Tech Stack</h2>
-          <Toggle mode={mode} setMode={setMode} />
+          <div className="self-start"><Toggle mode={mode} setMode={setMode} /></div>
         </div>
 
         <p className="mb-8 max-w-2xl text-sm leading-7 text-white/40">

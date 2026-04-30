@@ -255,14 +255,14 @@ function VariantB({ messages, input, isLoading, provider, chatRef, setInput, set
       <div className="pointer-events-none absolute -right-10 top-14 bottom-14 hidden w-px bg-white/8 lg:block" />
 
       {/* Section header */}
-      <div className="mb-10 flex items-end justify-between border-b border-white/6 pb-6">
+      <div className="mb-10 flex flex-col gap-3 border-b border-white/6 pb-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 className="text-3xl font-bold text-white">Ask me anything</h2>
           <p className="mt-1 text-sm text-white/35">
             {isLoading ? "Thinking..." : "About Billy's work and experience"}
           </p>
         </div>
-        <div className="inline-flex rounded-full border border-white/8 bg-white/3 p-1">
+        <div className="inline-flex self-start rounded-full border border-white/8 bg-white/3 p-1">
           {(["claude", "openai"] as Provider[]).map((p) => (
             <button key={p}
               onClick={() => { setProvider(p); setMessages([]); }}

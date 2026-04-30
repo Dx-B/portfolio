@@ -2,6 +2,7 @@ import HeroLarge from "@/app/temp/components/HeroLarge";
 import PassionLarge from "@/app/temp/components/PassionLarge";
 import ChatBotLarge from "@/app/temp/components/ChatBotLarge";
 import BrandBar from "@/app/components/BrandBar";
+import TextMarquee from "@/app/components/TextMarquee";
 import { AboutLarge } from "@/app/temp/components/AboutLarge";
 import { ProjectsLarge } from "@/app/temp/components/ProjectsLarge";
 import { ServicesLarge } from "@/app/temp/components/ServicesLarge";
@@ -15,9 +16,11 @@ export default function TempPage() {
   return (
     <main className="bg-[#080808]">
       <HeroLarge />
+      <TextMarquee />
       <PassionLarge />
+      {/* <TextMarquee /> */}
       <ChatBotLarge />
-      <BrandBar />
+      {/* <BrandBar /> */}
       <AboutLarge />
       <ProjectsLarge />
       <ServicesLarge />
