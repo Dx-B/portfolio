@@ -73,11 +73,11 @@ export function AboutLarge() {
               </div>
             </div>
             <p className="text-base leading-8 text-white/45">{SHORT_BIO}</p>
-            <p className="mt-4 text-base leading-8 text-white/45">{BIO_WORK}</p>
+            <p className="mt-4 hidden text-base leading-8 text-white/45 md:block">{BIO_WORK}</p>
           </div>
 
           {/* Timeline */}
-          <div className="relative border-l border-white/6 pl-10 md:min-w-52">
+          <div className="relative border-t border-white/6 pt-6 md:border-l md:border-t-0 md:min-w-52 md:pl-10 md:pt-0">
             <div className="space-y-7">
               {MILESTONES.map(({ year, event }, i) => (
                 <motion.div
@@ -87,7 +87,7 @@ export function AboutLarge() {
                   animate={inView ? { opacity: 1, x: 0 } : {}}
                   transition={{ duration: 0.4, ease: "easeOut", delay: timelineDelay(i) }}
                 >
-                  <div className="absolute left-[-2.65rem] top-1 h-1.5 w-1.5 rounded-full bg-white/20" />
+                  <div className="absolute left-[-2.65rem] top-1 hidden h-1.5 w-1.5 rounded-full bg-white/20 md:block" />
                   <p className="text-xs font-medium uppercase tracking-[0.2em] text-white/30">{year}</p>
                   <p className="mt-1 max-w-[22ch] text-sm leading-6 text-white/50">{event}</p>
                 </motion.div>
@@ -96,7 +96,7 @@ export function AboutLarge() {
           </div>
 
           {/* Stats */}
-          <div className="flex flex-col justify-center gap-8 border-l border-white/6 pl-10 md:min-w-36">
+          <div className="grid grid-cols-3 gap-4 border-t border-white/6 pt-6 md:flex md:min-w-36 md:flex-col md:justify-center md:gap-8 md:border-l md:border-t-0 md:pl-10 md:pt-0">
             {STATS.map(({ label, value }, i) => (
               <motion.div
                 key={label}
