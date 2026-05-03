@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
 
   const apiUrl =
     `${PSI_ENDPOINT}?url=${encodeURIComponent(TARGET_URL)}` +
-    `&strategy=mobile&category=performance` +
+    `&strategy=desktop&category=performance` +
     (process.env.PSI_API_KEY ? `&key=${process.env.PSI_API_KEY}` : "");
 
   const res = await fetch(apiUrl, { cache: "no-store" });

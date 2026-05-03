@@ -9,7 +9,7 @@ const CARD_DATA = {
   // Lighthouse (PSI)
   perf: 97,
   lcp: "0.6s", fcp: "0.4s", cls: "0.00", tbt: "0ms",
-  url: "billyzhang.dev/temp",
+  url: "billyzhang.dev/temp · desktop",
   // Vercel / build
   branch: "dev",
   buildTime: "7.2s",
