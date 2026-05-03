@@ -9,18 +9,14 @@ import { TechStackLarge } from "@/app/temp/components/TechStackLarge";
 import { JourneyLarge } from "@/app/temp/components/JourneyLarge";
 import { ContactLarge } from "@/app/temp/components/ContactLarge";
 import { FooterLarge } from "@/app/temp/components/FooterLarge";
-import dynamic from "next/dynamic";
-const TOCIndex = dynamic(
-  () => import("@/app/temp/components/TOCIndex").then(m => ({ default: m.TOCIndex })),
-  { ssr: false, loading: () => <div className="min-h-screen" /> }
-);
+import { TOCIndexDynamic } from "@/app/temp/components/TOCIndexDynamic";
 
 export default function TempPage() {
   return (
     <main className="bg-[#080808]">
       <HeroLarge />
       <TextMarquee />
-      <TOCIndex />
+      <TOCIndexDynamic />
       <div id="toc-passion"><PassionLarge /></div>
       <div id="toc-chatbot"><ChatBotLarge /></div>
       <div id="toc-about"><AboutLarge /></div>
