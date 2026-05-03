@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { AnimatePresence, motion, useInView, useAnimationControls } from "framer-motion";
+import { motion, useInView, useAnimationControls } from "framer-motion";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -16,8 +16,6 @@ const SECTIONS = [
   { id: "toc-contact",   label: "Contact",    desc: "Let's talk"         },  // 6 W
   { id: "toc-chatbot",   label: "Ask Me",     desc: "AI-powered Q&A"     },  // 7 NW
 ];
-
-type Layout = "spider" | "pinout" | "grid";
 
 function navTo(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -485,269 +483,6 @@ function SpiderLayout() {
   );
 }
 
-// ─── Layout B: IC Die Pinout ──────────────────────────────────────────────────
-
-type PinEntry = {
-  pin: [number, number];
-  traceEnd: [number, number];
-  card: [number, number];
-  cardCenter: [number, number];
-  label: string;
-};
-
-const PINOUT_PINS: PinEntry[] = [
-  { pin: [380, 145], traceEnd: [380, 97],  card: [315,  39], cardCenter: [380,  68], label: "P1" },
-  { pin: [520, 145], traceEnd: [520, 97],  card: [455,  39], cardCenter: [520,  68], label: "P2" },
-  { pin: [575, 215], traceEnd: [755, 215], card: [755, 186], cardCenter: [820, 215], label: "P3" },
-  { pin: [575, 325], traceEnd: [755, 325], card: [755, 296], cardCenter: [820, 325], label: "P4" },
-  { pin: [520, 395], traceEnd: [520, 443], card: [455, 443], cardCenter: [520, 472], label: "P5" },
-  { pin: [380, 395], traceEnd: [380, 443], card: [315, 443], cardCenter: [380, 472], label: "P6" },
-  { pin: [325, 325], traceEnd: [145, 325], card: [15,  296], cardCenter: [80,  325], label: "P7" },
-  { pin: [325, 215], traceEnd: [145, 215], card: [15,  186], cardCenter: [80,  215], label: "P8" },
-];
-
-const CHIP_H_LINES = [168, 210, 252, 294, 336, 378].map(y => ({ y }));
-const CHIP_V_LINES = [360, 395, 430, 465, 500, 540].map(x => ({ x }));
-
-function PinoutLayout() {
-  const [hov, setHov] = useState<number | null>(null);
-
-  return (
-    <div className="w-full" style={{ aspectRatio: "900/540" }}>
-      <svg viewBox="0 0 900 540" className="h-full w-full">
-        <GlowFilter id="pinout-glow" />
-        <path
-          d="M 325,145 L 440,145 A 10,10 0 0,1 460,145 L 575,145 L 575,395 L 325,395 Z"
-          fill="#0a0a0a" stroke="rgba(255,255,255,0.1)" strokeWidth={1}
-        />
-        {CHIP_H_LINES.map(({ y }) => (
-          <line key={`ch${y}`} x1={325} y1={y} x2={575} y2={y}
-            stroke="rgba(255,255,255,0.035)" strokeWidth={0.5} />
-        ))}
-        {CHIP_V_LINES.map(({ x }) => (
-          <line key={`cv${x}`} x1={x} y1={145} x2={x} y2={395}
-            stroke="rgba(255,255,255,0.035)" strokeWidth={0.5} />
-        ))}
-        <text x={450} y={253} textAnchor="middle"
-          fill="rgba(255,255,255,0.11)" fontSize={9} letterSpacing={4} fontFamily="monospace">
-          BILLY.ZHANG
-        </text>
-        <text x={450} y={270} textAnchor="middle"
-          fill="rgba(255,255,255,0.06)" fontSize={8} letterSpacing={2} fontFamily="monospace">
-          REV.2025
-        </text>
-        <text x={450} y={288} textAnchor="middle"
-          fill="rgba(255,255,255,0.08)" fontSize={8} letterSpacing={1} fontFamily="monospace">
-          FULL-STACK
-        </text>
-        <circle cx={450} cy={316} r={6} fill="none"
-          stroke="rgba(255,255,255,0.08)" strokeWidth={0.5} />
-        <line x1={444} y1={316} x2={456} y2={316} stroke="rgba(255,255,255,0.06)" strokeWidth={0.5} />
-        <line x1={450} y1={310} x2={450} y2={322} stroke="rgba(255,255,255,0.06)" strokeWidth={0.5} />
-        {SECTIONS.map((sec, i) => {
-          const { pin, traceEnd, card, cardCenter, label } = PINOUT_PINS[i];
-          const isHov = hov === i;
-          const traceD = `M ${pin[0]} ${pin[1]} L ${traceEnd[0]} ${traceEnd[1]}`;
-          return (
-            <g key={sec.id} style={{ cursor: "pointer" }}
-              onMouseEnter={() => setHov(i)}
-              onMouseLeave={() => setHov(null)}
-              onClick={() => navTo(sec.id)}
-            >
-              <path d={traceD} fill="none"
-                stroke="rgba(255,255,255,0.07)" strokeWidth={2} strokeLinecap="square" />
-              <motion.path d={traceD} fill="none"
-                stroke="#818cf8" strokeWidth={2} strokeLinecap="square"
-                filter="url(#pinout-glow)"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={isHov ? { pathLength: 1, opacity: 1 } : { opacity: 0, pathLength: 1 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-              />
-              <rect x={pin[0] - 4} y={pin[1] - 4} width={8} height={8}
-                fill={isHov ? "#818cf8" : "rgba(255,255,255,0.18)"}
-                style={{ transition: "fill 0.2s" }}
-              />
-              <text
-                x={pin[0] <= 325 ? pin[0] + 14 : pin[0] >= 575 ? pin[0] - 14 : pin[0]}
-                y={pin[1] <= 145 ? pin[1] + 14 : pin[1] >= 395 ? pin[1] - 8 : pin[1] + 4}
-                textAnchor={pin[0] <= 325 ? "start" : pin[0] >= 575 ? "end" : "middle"}
-                fill="rgba(255,255,255,0.18)" fontSize={7} letterSpacing={1} fontFamily="monospace"
-              >
-                {label}
-              </text>
-              <rect x={card[0]} y={card[1]} width={130} height={58} rx={6}
-                fill={isHov ? "rgba(79,70,229,0.09)" : "rgba(255,255,255,0.025)"}
-                stroke={isHov ? "rgba(129,140,248,0.35)" : "rgba(255,255,255,0.07)"}
-                strokeWidth={1} style={{ transition: "fill 0.2s, stroke 0.2s" }}
-              />
-              <text x={cardCenter[0]} y={cardCenter[1] - 6} textAnchor="middle"
-                fill={isHov ? "rgba(255,255,255,0.88)" : "rgba(255,255,255,0.6)"}
-                fontSize={12} fontWeight="600" fontFamily="inherit"
-                style={{ transition: "fill 0.2s" }}>
-                {sec.label}
-              </text>
-              <text x={cardCenter[0]} y={cardCenter[1] + 11} textAnchor="middle"
-                fill="rgba(255,255,255,0.28)" fontSize={9} fontFamily="inherit">
-                {sec.desc}
-              </text>
-            </g>
-          );
-        })}
-      </svg>
-    </div>
-  );
-}
-
-// ─── Layout C: DIP Breadboard Grid ───────────────────────────────────────────
-
-const GRID_PIN_ROWS = [120, 200, 280, 360];
-
-const GRID_LEFT: [number, number, number, number][] = [
-  [7, 380, 40,  200],
-  [6, 380, 40,  200],
-  [5, 380, 40,  200],
-  [4, 380, 40,  200],
-];
-const GRID_RIGHT: [number, number, number, number][] = [
-  [0, 520, 700, 700],
-  [1, 520, 700, 700],
-  [2, 520, 700, 700],
-  [3, 520, 700, 700],
-];
-
-function GridLayout() {
-  const [hov, setHov] = useState<number | null>(null);
-
-  return (
-    <div className="relative w-full overflow-hidden rounded-2xl"
-      style={{
-        aspectRatio: "900/480",
-        backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px)",
-        backgroundSize: "24px 24px",
-      }}
-    >
-      <svg viewBox="0 0 900 480" className="h-full w-full">
-        <GlowFilter id="grid-glow" />
-        <path
-          d="M 380,80 L 440,80 A 10,10 0 0,1 460,80 L 520,80 L 520,400 L 380,400 Z"
-          fill="#080808" stroke="rgba(255,255,255,0.1)" strokeWidth={1}
-        />
-        {[413, 450, 487].map(x => (
-          <line key={`gv${x}`} x1={x} y1={80} x2={x} y2={400}
-            stroke="rgba(255,255,255,0.04)" strokeWidth={0.5} />
-        ))}
-        {[160, 240, 320].map(y => (
-          <line key={`gh${y}`} x1={380} y1={y} x2={520} y2={y}
-            stroke="rgba(255,255,255,0.04)" strokeWidth={0.5} />
-        ))}
-        <text x={450} y={214} textAnchor="middle"
-          fill="rgba(255,255,255,0.45)" fontSize={11} fontWeight="700" fontFamily="monospace">
-          BZHANG
-        </text>
-        <text x={450} y={232} textAnchor="middle"
-          fill="rgba(255,255,255,0.18)" fontSize={8} fontFamily="monospace">
-          v2025
-        </text>
-        <text x={450} y={252} textAnchor="middle"
-          fill="rgba(255,255,255,0.1)" fontSize={7} fontFamily="monospace">
-          8-DIP
-        </text>
-        {GRID_PIN_ROWS.map((py, ri) => (
-          <g key={`pn${ri}`}>
-            <text x={394} y={py + 4} textAnchor="start"
-              fill="rgba(255,255,255,0.16)" fontSize={7} fontFamily="monospace">
-              {ri + 1}
-            </text>
-            <text x={506} y={py + 4} textAnchor="end"
-              fill="rgba(255,255,255,0.16)" fontSize={7} fontFamily="monospace">
-              {8 - ri}
-            </text>
-          </g>
-        ))}
-        {GRID_LEFT.map(([si, px, cardX], ri) => {
-          const py = GRID_PIN_ROWS[ri];
-          const isHov = hov === si;
-          const traceD = `M ${px} ${py} L ${cardX + 160} ${py}`;
-          const sec = SECTIONS[si];
-          return (
-            <g key={`gl${ri}`} style={{ cursor: "pointer" }}
-              onMouseEnter={() => setHov(si)}
-              onMouseLeave={() => setHov(null)}
-              onClick={() => navTo(sec.id)}
-            >
-              <line x1={px} y1={py} x2={px - 12} y2={py}
-                stroke="rgba(255,255,255,0.2)" strokeWidth={2} strokeLinecap="square" />
-              <path d={traceD} fill="none"
-                stroke="rgba(255,255,255,0.06)" strokeWidth={1.5} strokeLinecap="square" />
-              <motion.path d={traceD} fill="none"
-                stroke="#818cf8" strokeWidth={1.5} strokeLinecap="square"
-                filter="url(#grid-glow)"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={isHov ? { pathLength: 1, opacity: 1 } : { opacity: 0, pathLength: 1 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-              />
-              <rect x={cardX} y={py - 30} width={160} height={60} rx={6}
-                fill={isHov ? "rgba(79,70,229,0.09)" : "rgba(0,0,0,0.5)"}
-                stroke={isHov ? "rgba(129,140,248,0.35)" : "rgba(255,255,255,0.07)"}
-                strokeWidth={1} style={{ transition: "fill 0.2s, stroke 0.2s" }}
-              />
-              <text x={cardX + 148} y={py - 6} textAnchor="end"
-                fill={isHov ? "rgba(255,255,255,0.88)" : "rgba(255,255,255,0.58)"}
-                fontSize={12} fontWeight="600" fontFamily="inherit"
-                style={{ transition: "fill 0.2s" }}>
-                {sec.label}
-              </text>
-              <text x={cardX + 148} y={py + 11} textAnchor="end"
-                fill="rgba(255,255,255,0.26)" fontSize={9} fontFamily="inherit">
-                {sec.desc}
-              </text>
-            </g>
-          );
-        })}
-        {GRID_RIGHT.map(([si, px, cardX], ri) => {
-          const py = GRID_PIN_ROWS[ri];
-          const isHov = hov === si;
-          const traceD = `M ${px} ${py} L ${cardX} ${py}`;
-          const sec = SECTIONS[si];
-          return (
-            <g key={`gr${ri}`} style={{ cursor: "pointer" }}
-              onMouseEnter={() => setHov(si)}
-              onMouseLeave={() => setHov(null)}
-              onClick={() => navTo(sec.id)}
-            >
-              <line x1={px} y1={py} x2={px + 12} y2={py}
-                stroke="rgba(255,255,255,0.2)" strokeWidth={2} strokeLinecap="square" />
-              <path d={traceD} fill="none"
-                stroke="rgba(255,255,255,0.06)" strokeWidth={1.5} strokeLinecap="square" />
-              <motion.path d={traceD} fill="none"
-                stroke="#818cf8" strokeWidth={1.5} strokeLinecap="square"
-                filter="url(#grid-glow)"
-                initial={{ pathLength: 0, opacity: 0 }}
-                animate={isHov ? { pathLength: 1, opacity: 1 } : { opacity: 0, pathLength: 1 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-              />
-              <rect x={cardX} y={py - 30} width={160} height={60} rx={6}
-                fill={isHov ? "rgba(79,70,229,0.09)" : "rgba(0,0,0,0.5)"}
-                stroke={isHov ? "rgba(129,140,248,0.35)" : "rgba(255,255,255,0.07)"}
-                strokeWidth={1} style={{ transition: "fill 0.2s, stroke 0.2s" }}
-              />
-              <text x={cardX + 12} y={py - 6} textAnchor="start"
-                fill={isHov ? "rgba(255,255,255,0.88)" : "rgba(255,255,255,0.58)"}
-                fontSize={12} fontWeight="600" fontFamily="inherit"
-                style={{ transition: "fill 0.2s" }}>
-                {sec.label}
-              </text>
-              <text x={cardX + 12} y={py + 11} textAnchor="start"
-                fill="rgba(255,255,255,0.26)" fontSize={9} fontFamily="inherit">
-                {sec.desc}
-              </text>
-            </g>
-          );
-        })}
-      </svg>
-    </div>
-  );
-}
 
 // ─── Mobile nav (< lg) ───────────────────────────────────────────────────────
 
@@ -799,8 +534,6 @@ function MobileNav() {
 // ─── Export ───────────────────────────────────────────────────────────────────
 
 export function TOCIndex() {
-  const layout: Layout = "spider";
-
   return (
     <motion.div
       className="flex min-h-screen items-center"
@@ -817,18 +550,13 @@ export function TOCIndex() {
 
         {/* Desktop: spider SVG */}
         <div className="hidden lg:block px-8 xl:px-14">
-          <AnimatePresence mode="wait">
-            <motion.div key={layout}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.25 }}
-            >
-              {layout === "spider" && <SpiderLayout />}
-              {layout === "pinout" && <PinoutLayout />}
-              {layout === "grid"   && <GridLayout />}
-            </motion.div>
-          </AnimatePresence>
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25 }}
+          >
+            <SpiderLayout />
+          </motion.div>
         </div>
       </div>
     </motion.div>
