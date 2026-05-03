@@ -204,7 +204,7 @@ export default function HeroLarge() {
       {/* Scroll chevron */}
       <button
         onClick={scrollToContact}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/20 transition hover:text-white/50"
+        className="absolute cursor-pointer bottom-12 left-1/2 -translate-x-1/2 text-white/20 transition hover:text-white/50"
         aria-label="Scroll down"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
