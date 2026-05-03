@@ -10,11 +10,16 @@ import { JourneyLarge } from "@/app/temp/components/JourneyLarge";
 import { ContactLarge } from "@/app/temp/components/ContactLarge";
 import { FooterLarge } from "@/app/temp/components/FooterLarge";
 import { TOCIndexDynamic } from "@/app/temp/components/TOCIndexDynamic";
+import { NavBar } from "@/app/temp/components/NavBar";
+import { getPSIMetrics } from "@/lib/psi";
 
-export default function TempPage() {
+export default async function TempPage() {
+  const metrics = await getPSIMetrics();
+
   return (
     <main className="bg-[#080808]">
-      <HeroLarge />
+      <NavBar />
+      <HeroLarge metrics={metrics} />
       <TextMarquee />
       <TOCIndexDynamic />
       <div id="toc-passion"><PassionLarge /></div>
@@ -23,7 +28,7 @@ export default function TempPage() {
       <div id="toc-projects"><ProjectsLarge /></div>
       <div id="toc-process"><ServicesLarge /></div>
       <div id="toc-techstack"><TechStackLarge /></div>
-      <div id="toc-journey"><JourneyLarge /></div>
+      {/* <div id="toc-journey"><JourneyLarge /></div> */}
       {/* <ScrollHero /> */}
       <div id="toc-contact"><ContactLarge /></div>
       <FooterLarge />
