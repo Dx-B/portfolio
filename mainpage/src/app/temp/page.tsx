@@ -9,7 +9,11 @@ import { TechStackLarge } from "@/app/temp/components/TechStackLarge";
 import { JourneyLarge } from "@/app/temp/components/JourneyLarge";
 import { ContactLarge } from "@/app/temp/components/ContactLarge";
 import { FooterLarge } from "@/app/temp/components/FooterLarge";
-import { TOCIndex } from "@/app/temp/components/TOCIndex";
+import dynamic from "next/dynamic";
+const TOCIndex = dynamic(
+  () => import("@/app/temp/components/TOCIndex").then(m => ({ default: m.TOCIndex })),
+  { ssr: false, loading: () => <div className="min-h-screen" /> }
+);
 
 export default function TempPage() {
   return (
