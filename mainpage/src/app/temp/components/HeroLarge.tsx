@@ -1,9 +1,16 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import Rotator from "@/app/about/founders/portfolios/0/components/Rotator";
+import { motion } from "framer-motion";
 import type { LiveCardData } from "@/lib/psi";
 import { LIVE_FALLBACK } from "@/lib/psi";
+
+const L = ({ d, children }: { d: number; children: React.ReactNode }) => (
+  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.18, delay: d }}>
+    {children}
+  </motion.div>
+);
 
 // ─── Static card data (non-live) ──────────────────────────────────────────────
 const CARD = {
@@ -59,38 +66,51 @@ function VercelSection({ measuredAt, region, git }: { measuredAt?: string; regio
       </div>
 
       <div className="space-y-3 text-[11px]">
-        <div>
-          <span className="text-white/20">$ </span>
-          <span className="text-white/38">next build</span>
-        </div>
+        <L d={0}>
+          <div>
+            <span className="text-white/20">$ </span>
+            <span className="text-white/38">next build</span>
+          </div>
+        </L>
 
         <div className="space-y-0.5">
-          <div className="mb-1.5 text-[9px] uppercase tracking-[0.14em] text-white/18">Route (app)</div>
-          {CARD.routes.map(({ s, p, hi }) => (
-            <div key={p} className={hi ? "text-indigo-400/75" : "text-white/28"}>
-              <span className="text-white/16">{s} </span>{p}
-            </div>
+          <L d={0.15}>
+            <div className="mb-1.5 text-[9px] uppercase tracking-[0.14em] text-white/18">Route (app)</div>
+          </L>
+          {CARD.routes.map(({ s, p, hi }, i) => (
+            <L key={p} d={0.25 + i * 0.12}>
+              <div className={hi ? "text-indigo-400/75" : "text-white/28"}>
+                <span className="text-white/16">{s} </span>{p}
+              </div>
+            </L>
           ))}
-          <div className="text-white/16 pl-4">+ {CARD.extra} more</div>
+          <L d={0.75}>
+            <div className="text-white/16 pl-4">+ {CARD.extra} more</div>
+          </L>
         </div>
 
-        <div className="text-emerald-400/65">✓ Compiled in {CARD.buildTime} · Turbopack</div>
+        <L d={0.85}>
+          <div className="text-emerald-400/65">✓ Compiled in {CARD.buildTime} · Turbopack</div>
+        </L>
       </div>
 
-      <div className="mt-3 h-px bg-white/6" />
+      <L d={1.0}>
+        <div className="mt-3 h-px bg-white/6" />
+        {meta && (
+          <div className="mt-2.5 text-[9px] text-white/18">{meta}</div>
+        )}
+      </L>
 
-      {meta && (
-        <div className="mt-2.5 text-[9px] text-white/18">{meta}</div>
-      )}
-
-      <div className="mt-2 flex items-center gap-2 text-[10px] text-white/28">
-        <span>⎇</span>
-        <span>{branch}</span>
-        <span className="text-white/14">·</span>
-        <span>{commit}</span>
-        <span className="text-white/14">—</span>
-        <span className="text-white/40 truncate">{message}</span>
-      </div>
+      <L d={1.1}>
+        <div className="mt-2 flex items-center gap-2 text-[10px] text-white/28">
+          <span>⎇</span>
+          <span>{branch}</span>
+          <span className="text-white/14">·</span>
+          <span>{commit}</span>
+          <span className="text-white/14">—</span>
+          <span className="text-white/40 truncate">{message}</span>
+        </div>
+      </L>
     </div>
   );
 }
@@ -103,16 +123,15 @@ const GhMark = ({ size = 13 }: { size?: number }) => (
   </svg>
 );
 
-function GitHubSection({ github, git }: { github: LiveCardData["github"]; git?: GitInfo }) {
+function GitHubSection({ github, git, expanded }: { github: LiveCardData["github"]; git?: GitInfo; expanded: boolean }) {
   const branch  = git?.branch  ?? CARD.branch;
   const commit  = git?.commit  ?? CARD.commit;
   const message = git?.message ?? CARD.message;
-  const hasDiff = github.additions > 0 || github.deletions > 0;
   const date    = relTime(github.commitDate);
 
   return (
-    <div className="p-5 bg-[#0d1117]">
-      <div className="flex items-center justify-between mb-4">
+    <div className="bg-[#0d1117]">
+      <div className="flex items-center justify-between px-5 py-4">
         <div className="flex items-center gap-2 text-[#c9d1d9]/70">
           <GhMark />
           <span className="text-[11px] font-medium tracking-wide">GitHub</span>
@@ -130,36 +149,43 @@ function GitHubSection({ github, git }: { github: LiveCardData["github"]; git?: 
         </div>
       </div>
 
-      <div className="rounded-md border border-[#30363d] bg-[#161b22] p-3 space-y-1.5 mb-3">
-        <div className="flex items-center gap-2 text-[10px] text-[#8b949e]">
-          <svg width="11" height="11" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M9.5 3.25a2.25 2.25 0 1 1 3 2.122V6A2.5 2.5 0 0 1 10 8.5H6a1 1 0 0 0-1 1v1.128a2.251 2.251 0 1 1-1.5 0V5.372a2.25 2.25 0 1 1 1.5 0v1.836A2.493 2.493 0 0 1 6 7h4a1 1 0 0 0 1-1v-.628A2.25 2.25 0 0 1 9.5 3.25Zm-6 0a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Zm8.25-.75a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5ZM4.25 12a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Z"/>
-          </svg>
-          <span className="text-[#388bfd]">{branch}</span>
-          <span>·</span>
-          <code className="text-[10px]">{commit}</code>
-          {date && <><span>·</span><span>{date}</span></>}
-        </div>
-
-        <div className="text-[11px] text-[#c9d1d9]">{message}</div>
-
-        {hasDiff && (
-          <div className="flex items-center gap-3 text-[10px] pt-0.5">
-            <span style={{ color: "#3fb950" }}>+{github.additions.toLocaleString()}</span>
-            <span style={{ color: "#f85149" }}>−{github.deletions.toLocaleString()}</span>
-          </div>
-        )}
-      </div>
-
-      <a
-        href={CARD.repoUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center justify-center gap-2 w-full rounded-md border border-[#30363d] bg-[#21262d] hover:bg-[#30363d] text-[#c9d1d9] text-[11px] py-1.5 transition-colors duration-150"
+      <motion.div
+        initial={{ height: 0, opacity: 0 }}
+        animate={expanded ? { height: "auto", opacity: 1 } : { height: 0, opacity: 0 }}
+        transition={{ duration: 0.38, ease: [0.25, 0.46, 0.45, 0.94] }}
+        style={{ overflow: "hidden" }}
       >
-        <GhMark />
-        View Repository
-      </a>
+        <div className="px-5 pb-5 space-y-3">
+          <div className="rounded-md border border-[#30363d] bg-[#161b22] p-3 space-y-1.5">
+            <div className="flex items-center gap-2 text-[10px] text-[#8b949e]">
+              <svg width="11" height="11" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M9.5 3.25a2.25 2.25 0 1 1 3 2.122V6A2.5 2.5 0 0 1 10 8.5H6a1 1 0 0 0-1 1v1.128a2.251 2.251 0 1 1-1.5 0V5.372a2.25 2.25 0 1 1 1.5 0v1.836A2.493 2.493 0 0 1 6 7h4a1 1 0 0 0 1-1v-.628A2.25 2.25 0 0 1 9.5 3.25Zm-6 0a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Zm8.25-.75a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5ZM4.25 12a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Z"/>
+              </svg>
+              <span className="text-[#388bfd]">{branch}</span>
+              <span>·</span>
+              <code className="text-[10px]">{commit}</code>
+              {date && <><span>·</span><span>{date}</span></>}
+            </div>
+
+            <div className="text-[11px] text-[#c9d1d9]">{message}</div>
+
+            <div className="flex items-center gap-3 text-[10px] pt-0.5">
+              <span style={{ color: "#3fb950" }}>+{github.additions.toLocaleString()}</span>
+              <span style={{ color: "#f85149" }}>−{github.deletions.toLocaleString()}</span>
+            </div>
+          </div>
+
+          <a
+            href={CARD.repoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 w-full rounded-md border border-[#30363d] bg-[#21262d] hover:bg-[#30363d] text-[#c9d1d9] text-[11px] py-1.5 transition-colors duration-150"
+          >
+            <GhMark />
+            View Repository
+          </a>
+        </div>
+      </motion.div>
     </div>
   );
 }
@@ -186,7 +212,7 @@ function CategoryRing({ score, label }: { score: number; label: string }) {
   );
 }
 
-function LighthouseSection({ psi }: { psi: LiveCardData["psi"] }) {
+function LighthouseSection({ psi, measuredAt, expanded }: { psi: LiveCardData["psi"]; measuredAt?: string; expanded: boolean }) {
   const vitals: [string, string][] = [
     ["LCP", psi.lcp],
     ["FCP", psi.fcp],
@@ -195,8 +221,8 @@ function LighthouseSection({ psi }: { psi: LiveCardData["psi"] }) {
   ];
 
   return (
-    <div className="p-5 bg-[#202124]">
-      <div className="flex items-center justify-between mb-4">
+    <div className="bg-[#202124]">
+      <div className="flex items-center justify-between px-5 py-4">
         <div className="flex items-center gap-2">
           <GoogleGIcon />
           <span className="text-[11px] font-medium tracking-wide text-[#e8eaed]">Lighthouse</span>
@@ -204,23 +230,41 @@ function LighthouseSection({ psi }: { psi: LiveCardData["psi"] }) {
         <span className="text-[10px] text-[#9aa0a6]">{CARD.url}</span>
       </div>
 
-      <div className="grid grid-cols-4 gap-2 mb-4">
-        <CategoryRing score={psi.perf}          label="Perf"  />
-        <CategoryRing score={psi.a11y}          label="A11y"  />
-        <CategoryRing score={psi.bestPractices} label="B.P."  />
-        <CategoryRing score={psi.seo}           label="SEO"   />
-      </div>
-
-      <div className="h-px bg-white/8 mb-3" />
-
-      <div className="space-y-1.5">
-        {vitals.map(([k, v]) => (
-          <div key={k} className="flex items-center justify-between">
-            <span className="text-[10px] text-[#9aa0a6]">{k}</span>
-            <span className="text-[10px] font-medium" style={{ color: "#0cce6b" }}>{v}</span>
+      <motion.div
+        initial={{ height: 0, opacity: 0 }}
+        animate={expanded ? { height: "auto", opacity: 1 } : { height: 0, opacity: 0 }}
+        transition={{ duration: 0.38, ease: [0.25, 0.46, 0.45, 0.94] }}
+        style={{ overflow: "hidden" }}
+      >
+        <div className="px-5 pb-5">
+          <div className="grid grid-cols-4 gap-2 mb-4">
+            <CategoryRing score={psi.perf}          label="Perf"  />
+            <CategoryRing score={psi.a11y}          label="A11y"  />
+            <CategoryRing score={psi.bestPractices} label="B.P."  />
+            <CategoryRing score={psi.seo}           label="SEO"   />
           </div>
-        ))}
-      </div>
+
+          <div className="h-px bg-white/8 mb-3" />
+
+          <div className="space-y-1.5">
+            {vitals.map(([k, v]) => (
+              <div key={k} className="flex items-center justify-between">
+                <span className="text-[10px] text-[#9aa0a6]">{k}</span>
+                <span className="text-[10px] font-medium" style={{ color: "#0cce6b" }}>{v}</span>
+              </div>
+            ))}
+          </div>
+
+          {measuredAt && (
+            <div className="mt-3 pt-3 border-t border-white/6 text-[9px] text-[#9aa0a6]">
+              Reviewed {new Date(measuredAt).toLocaleString("en-US", {
+                month: "short", day: "numeric", year: "numeric",
+                hour: "numeric", minute: "2-digit", timeZoneName: "short",
+              })}
+            </div>
+          )}
+        </div>
+      </motion.div>
     </div>
   );
 }
@@ -239,13 +283,22 @@ function GoogleGIcon() {
 // ─── Composed card ─────────────────────────────────────────────────────────────
 
 function BuildCard({ liveData, region, git }: { liveData: LiveCardData; region?: string; git?: GitInfo }) {
+  const [ghExpanded, setGhExpanded] = useState(false);
+  const [lhExpanded, setLhExpanded] = useState(false);
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setGhExpanded(true), 1350);
+    const t2 = setTimeout(() => setLhExpanded(true), 1750);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, []);
+
   return (
     <div className="rounded-2xl overflow-hidden border border-white/8 font-mono text-xs">
       <VercelSection measuredAt={liveData.measuredAt} region={region} git={git} />
       <div className="h-px bg-white/6" />
-      <GitHubSection github={liveData.github} git={git} />
+      <GitHubSection github={liveData.github} git={git} expanded={ghExpanded} />
       <div className="h-px bg-white/6" />
-      <LighthouseSection psi={liveData.psi} />
+      <LighthouseSection psi={liveData.psi} measuredAt={liveData.measuredAt} expanded={lhExpanded} />
     </div>
   );
 }
@@ -268,31 +321,42 @@ export default function HeroLarge({ liveData, region, git }: { liveData?: LiveCa
 
           {/* Left — identity + CTAs */}
           <div className="flex flex-col">
-            <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/4 px-3 py-1.5 text-[11px] uppercase tracking-[0.22em] text-white/40">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-              Available for opportunities
-            </div>
+            <span className="mb-5 text-[11px] uppercase tracking-[0.22em] text-white/25">Hey there!</span>
 
-            <h1 className="text-5xl font-bold tracking-tight text-white md:text-6xl xl:text-7xl">
-              Billy Zhang
+            <h1 className="text-5xl font-bold tracking-tight text-white md:text-6xl xl:text-7xl leading-[1.1]">
+              I&apos;m Billy.<br />
+            </h1>
+            <h1 className="text-5xl font-bold tracking-tight text-white md:text-6xl xl:text-5xl leading-[1.1]">
+              I like building{" "}
+              <span className="bg-linear-to-r from-[#818cf8] via-[#a855f7] to-[#ec4899] bg-clip-text text-transparent">
+                things.
+              </span>
             </h1>
 
-            <div className="mt-3">
-              <Rotator />
+            <div className="mt-6 max-w-sm space-y-3">
+              <p className="text-lg leading-relaxed text-white/70">
+                I like making things pretty, but they gotta be{" "}
+                <span className="bg-linear-to-r from-[#818cf8] via-[#a855f7] to-[#ec4899] bg-clip-text text-transparent font-semibold">
+                  fast
+                </span>{" "}
+                too.
+              </p>
+              <p className="text-base leading-relaxed text-white/35">
+                In fact, I&apos;ve put everything about this site here so you can see just how fast it is :)
+              </p>
+              <p className="text-base leading-relaxed text-white/35">
+                Feel free to look around, and make yourself at home.
+              </p>
             </div>
 
-            <p className="mt-5 max-w-md text-base leading-8 text-white/40">
-              Building fast, modern, AI-powered web experiences.
-            </p>
-
-            <div className="mt-8 flex flex-wrap gap-3">
-              <a href="/resume.pdf" download
-                className="rounded-xl border border-white/10 bg-white/4 px-6 py-3 text-sm font-medium text-white/70 transition hover:border-white/20 hover:bg-white/8 hover:text-white">
-                Resume
+            <div className="mt-10 flex items-center gap-6">
+              <a href="#contact" className="relative rounded-xl bg-linear-to-r from-[#818cf8] via-[#a855f7] to-[#ec4899] p-px">
+                <span className="block rounded-[11px] bg-[#080808] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-white/5">
+                  Let&apos;s Chat →
+                </span>
               </a>
-              <a href="#contact"
-                className="rounded-xl bg-white px-6 py-3 text-sm font-medium text-black transition hover:bg-white/90">
-                Let&apos;s Chat →
+              <a href="/resume.pdf" download className="text-sm text-white/40 transition-colors hover:text-white/70">
+                Resume ↗
               </a>
             </div>
 
