@@ -2,17 +2,18 @@
 
 import Image from "next/image";
 import Rotator from "@/app/about/founders/portfolios/0/components/Rotator";
-import type { PSIMetrics } from "@/lib/psi";
+import type { LiveCardData } from "@/lib/psi";
+import { LIVE_FALLBACK } from "@/lib/psi";
 
-// ─── Swap with build-time / PSI values before shipping ────────────────────────
-const CARD_DATA = {
-  // Lighthouse (PSI)
-  perf: 97,
-  lcp: "0.6s", fcp: "0.4s", cls: "0.00", tbt: "0ms",
-  url: "billyzhang.dev/temp · desktop",
-  // Vercel / build
-  branch: "dev",
+// ─── Static card data (non-live) ──────────────────────────────────────────────
+const CARD = {
+  url:       "billyzhang.dev/temp · desktop",
+  branch:    "dev",
   buildTime: "7.2s",
+  commit:    "b446c81",
+  message:   "TOC LCP LL Fix 1",
+  repoUrl:   "https://github.com/Dx-B/portfolio",
+  repoName:  "Dx-B/portfolio",
   routes: [
     { s: "┌ ○", p: "/",         hi: false },
     { s: "├ ○", p: "/temp",     hi: true  },
@@ -20,16 +21,31 @@ const CARD_DATA = {
     { s: "└ ○", p: "/berta",    hi: false },
   ],
   extra: 3,
-  // GitHub
-  commit: "b446c81",
-  message: "TOC LCP LL Fix 1",
-  repoUrl: "https://github.com/Dx-B/portfolio",
-  repoName: "Dx-B/portfolio",
 };
 
-// ─── Vercel section (build output + deploy status) ────────────────────────────
+function relTime(dateStr: string): string {
+  if (!dateStr) return "";
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const h = Math.floor(diff / 3_600_000);
+  const d = Math.floor(diff / 86_400_000);
+  if (h < 1) return "just now";
+  if (h < 24) return `${h}h ago`;
+  if (d === 1) return "yesterday";
+  return `${d}d ago`;
+}
 
-function VercelSection() {
+// ─── Vercel section ────────────────────────────────────────────────────────────
+
+function VercelSection({ measuredAt, region, git }: { measuredAt?: string; region?: string; git?: GitInfo }) {
+  const branch  = git?.branch  ?? CARD.branch;
+  const commit  = git?.commit  ?? CARD.commit;
+  const message = git?.message ?? CARD.message;
+  const meta = [
+    "Next.js 16",
+    region,
+    measuredAt ? `Measured ${relTime(measuredAt)}` : null,
+  ].filter(Boolean).join(" · ");
+
   return (
     <div className="bg-[#0d0d0d] p-5">
       <div className="flex items-center justify-between mb-4">
@@ -42,7 +58,6 @@ function VercelSection() {
         </span>
       </div>
 
-      {/* Build output */}
       <div className="space-y-3 text-[11px]">
         <div>
           <span className="text-white/20">$ </span>
@@ -51,29 +66,30 @@ function VercelSection() {
 
         <div className="space-y-0.5">
           <div className="mb-1.5 text-[9px] uppercase tracking-[0.14em] text-white/18">Route (app)</div>
-          {CARD_DATA.routes.map(({ s, p, hi }) => (
+          {CARD.routes.map(({ s, p, hi }) => (
             <div key={p} className={hi ? "text-indigo-400/75" : "text-white/28"}>
               <span className="text-white/16">{s} </span>{p}
             </div>
           ))}
-          <div className="text-white/16 pl-4">+ {CARD_DATA.extra} more</div>
+          <div className="text-white/16 pl-4">+ {CARD.extra} more</div>
         </div>
 
-        <div className="text-emerald-400/65">
-          ✓ Compiled in {CARD_DATA.buildTime} · Turbopack
-        </div>
+        <div className="text-emerald-400/65">✓ Compiled in {CARD.buildTime} · Turbopack</div>
       </div>
 
-      <div className="mt-4 h-px bg-white/6" />
+      <div className="mt-3 h-px bg-white/6" />
 
-      {/* Deploy info */}
-      <div className="mt-3 flex items-center gap-2 text-[10px] text-white/28">
+      {meta && (
+        <div className="mt-2.5 text-[9px] text-white/18">{meta}</div>
+      )}
+
+      <div className="mt-2 flex items-center gap-2 text-[10px] text-white/28">
         <span>⎇</span>
-        <span>{CARD_DATA.branch}</span>
+        <span>{branch}</span>
         <span className="text-white/14">·</span>
-        <span>{CARD_DATA.commit}</span>
+        <span>{commit}</span>
         <span className="text-white/14">—</span>
-        <span className="text-white/40 truncate">{CARD_DATA.message}</span>
+        <span className="text-white/40 truncate">{message}</span>
       </div>
     </div>
   );
@@ -87,7 +103,13 @@ const GhMark = ({ size = 13 }: { size?: number }) => (
   </svg>
 );
 
-function GitHubSection() {
+function GitHubSection({ github, git }: { github: LiveCardData["github"]; git?: GitInfo }) {
+  const branch  = git?.branch  ?? CARD.branch;
+  const commit  = git?.commit  ?? CARD.commit;
+  const message = git?.message ?? CARD.message;
+  const hasDiff = github.additions > 0 || github.deletions > 0;
+  const date    = relTime(github.commitDate);
+
   return (
     <div className="p-5 bg-[#0d1117]">
       <div className="flex items-center justify-between mb-4">
@@ -95,7 +117,17 @@ function GitHubSection() {
           <GhMark />
           <span className="text-[11px] font-medium tracking-wide">GitHub</span>
         </div>
-        <span className="text-[10px] text-[#8b949e]">{CARD_DATA.repoName}</span>
+        <div className="flex items-center gap-2 text-[10px] text-[#8b949e]">
+          {github.stars > 0 && (
+            <span className="flex items-center gap-1">
+              <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"/>
+              </svg>
+              {github.stars}
+            </span>
+          )}
+          <span>{CARD.repoName}</span>
+        </div>
       </div>
 
       <div className="rounded-md border border-[#30363d] bg-[#161b22] p-3 space-y-1.5 mb-3">
@@ -103,15 +135,24 @@ function GitHubSection() {
           <svg width="11" height="11" viewBox="0 0 16 16" fill="currentColor">
             <path d="M9.5 3.25a2.25 2.25 0 1 1 3 2.122V6A2.5 2.5 0 0 1 10 8.5H6a1 1 0 0 0-1 1v1.128a2.251 2.251 0 1 1-1.5 0V5.372a2.25 2.25 0 1 1 1.5 0v1.836A2.493 2.493 0 0 1 6 7h4a1 1 0 0 0 1-1v-.628A2.25 2.25 0 0 1 9.5 3.25Zm-6 0a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Zm8.25-.75a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5ZM4.25 12a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Z"/>
           </svg>
-          <span className="text-[#388bfd]">{CARD_DATA.branch}</span>
+          <span className="text-[#388bfd]">{branch}</span>
           <span>·</span>
-          <code className="text-[10px]">{CARD_DATA.commit}</code>
+          <code className="text-[10px]">{commit}</code>
+          {date && <><span>·</span><span>{date}</span></>}
         </div>
-        <div className="text-[11px] text-[#c9d1d9]">{CARD_DATA.message}</div>
+
+        <div className="text-[11px] text-[#c9d1d9]">{message}</div>
+
+        {hasDiff && (
+          <div className="flex items-center gap-3 text-[10px] pt-0.5">
+            <span style={{ color: "#3fb950" }}>+{github.additions.toLocaleString()}</span>
+            <span style={{ color: "#f85149" }}>−{github.deletions.toLocaleString()}</span>
+          </div>
+        )}
       </div>
 
       <a
-        href={CARD_DATA.repoUrl}
+        href={CARD.repoUrl}
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center justify-center gap-2 w-full rounded-md border border-[#30363d] bg-[#21262d] hover:bg-[#30363d] text-[#c9d1d9] text-[11px] py-1.5 transition-colors duration-150"
@@ -125,37 +166,27 @@ function GitHubSection() {
 
 // ─── Lighthouse section ────────────────────────────────────────────────────────
 
-function GoogleGIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-    </svg>
-  );
-}
-
-function ScoreRing({ score }: { score: number }) {
-  const r = 26;
-  const circ = 2 * Math.PI * r;
-  const arc = (score / 100) * circ;
+function CategoryRing({ score, label }: { score: number; label: string }) {
+  const r     = 17;
+  const circ  = 2 * Math.PI * r;
+  const arc   = (score / 100) * circ;
   const color = score >= 90 ? "#0cce6b" : score >= 50 ? "#ffa400" : "#ff4e42";
   return (
-    <svg width="64" height="64" viewBox="0 0 64 64">
-      <circle cx="32" cy="32" r={r} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="4" />
-      <circle cx="32" cy="32" r={r} fill="none" stroke={color} strokeWidth="4"
-        strokeDasharray={`${arc} ${circ - arc}`} strokeLinecap="round"
-        transform="rotate(-90 32 32)" />
-      <text x="32" y="37" textAnchor="middle" fontSize="13" fontWeight="700"
-        fill={color} fontFamily="monospace">{score}</text>
-    </svg>
+    <div className="flex flex-col items-center gap-1">
+      <svg width="42" height="42" viewBox="0 0 42 42">
+        <circle cx="21" cy="21" r={r} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="3.5" />
+        <circle cx="21" cy="21" r={r} fill="none" stroke={color} strokeWidth="3.5"
+          strokeDasharray={`${arc} ${circ - arc}`} strokeLinecap="round"
+          transform="rotate(-90 21 21)" />
+        <text x="21" y="25" textAnchor="middle" fontSize="10" fontWeight="700"
+          fill={color} fontFamily="monospace">{score}</text>
+      </svg>
+      <span className="text-[9px] uppercase tracking-widest text-[#9aa0a6]">{label}</span>
+    </div>
   );
 }
 
-type PsiValues = { perf: number; lcp: string; fcp: string; cls: string; tbt: string };
-
-function LighthouseSection({ psi }: { psi: PsiValues }) {
+function LighthouseSection({ psi }: { psi: LiveCardData["psi"] }) {
   const vitals: [string, string][] = [
     ["LCP", psi.lcp],
     ["FCP", psi.fcp],
@@ -170,57 +201,61 @@ function LighthouseSection({ psi }: { psi: PsiValues }) {
           <GoogleGIcon />
           <span className="text-[11px] font-medium tracking-wide text-[#e8eaed]">Lighthouse</span>
         </div>
-        <span className="text-[10px] text-[#9aa0a6]">{CARD_DATA.url}</span>
+        <span className="text-[10px] text-[#9aa0a6]">{CARD.url}</span>
       </div>
 
-      <div className="flex items-center gap-5">
-        <div className="flex flex-col items-center gap-1">
-          <ScoreRing score={psi.perf} />
-          <span className="text-[8px] uppercase tracking-[0.14em] text-[#9aa0a6]">Performance</span>
-        </div>
+      <div className="grid grid-cols-4 gap-2 mb-4">
+        <CategoryRing score={psi.perf}          label="Perf"  />
+        <CategoryRing score={psi.a11y}          label="A11y"  />
+        <CategoryRing score={psi.bestPractices} label="B.P."  />
+        <CategoryRing score={psi.seo}           label="SEO"   />
+      </div>
 
-        <div className="flex-1">
-          <div className="text-[9px] uppercase tracking-[0.14em] text-[#9aa0a6] mb-2.5">
-            Core Web Vitals
+      <div className="h-px bg-white/8 mb-3" />
+
+      <div className="space-y-1.5">
+        {vitals.map(([k, v]) => (
+          <div key={k} className="flex items-center justify-between">
+            <span className="text-[10px] text-[#9aa0a6]">{k}</span>
+            <span className="text-[10px] font-medium" style={{ color: "#0cce6b" }}>{v}</span>
           </div>
-          <div className="space-y-1.5">
-            {vitals.map(([k, v]) => (
-              <div key={k} className="flex items-center justify-between">
-                <span className="text-[10px] text-[#9aa0a6]">{k}</span>
-                <span className="text-[10px] font-medium" style={{ color: "#0cce6b" }}>{v}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );
 }
 
+function GoogleGIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+    </svg>
+  );
+}
+
 // ─── Composed card ─────────────────────────────────────────────────────────────
 
-function BuildCard({ psi }: { psi: PsiValues }) {
+function BuildCard({ liveData, region, git }: { liveData: LiveCardData; region?: string; git?: GitInfo }) {
   return (
     <div className="rounded-2xl overflow-hidden border border-white/8 font-mono text-xs">
-      <VercelSection />
+      <VercelSection measuredAt={liveData.measuredAt} region={region} git={git} />
       <div className="h-px bg-white/6" />
-      <GitHubSection />
+      <GitHubSection github={liveData.github} git={git} />
       <div className="h-px bg-white/6" />
-      <LighthouseSection psi={psi} />
+      <LighthouseSection psi={liveData.psi} />
     </div>
   );
 }
 
 // ─── Hero layout ───────────────────────────────────────────────────────────────
 
-export default function HeroLarge({ metrics }: { metrics?: PSIMetrics }) {
-  const psi = {
-    perf: metrics?.perf ?? CARD_DATA.perf,
-    lcp:  metrics?.lcp  ?? CARD_DATA.lcp,
-    fcp:  metrics?.fcp  ?? CARD_DATA.fcp,
-    cls:  metrics?.cls  ?? CARD_DATA.cls,
-    tbt:  metrics?.tbt  ?? CARD_DATA.tbt,
-  };
+type GitInfo = { branch: string; commit: string; message: string };
+
+export default function HeroLarge({ liveData, region, git }: { liveData?: LiveCardData; region?: string; git?: GitInfo }) {
+  const data = liveData ?? LIVE_FALLBACK;
 
   const scrollToContact = () => {
     window.scrollBy({ top: window.innerHeight, behavior: "smooth" });
@@ -282,7 +317,7 @@ export default function HeroLarge({ metrics }: { metrics?: PSIMetrics }) {
 
           {/* Right — branded metrics card (md+) */}
           <div className="hidden md:block">
-            <BuildCard psi={psi} />
+            <BuildCard liveData={data} region={region} git={git} />
           </div>
 
         </div>

@@ -11,15 +11,21 @@ import { ContactLarge } from "@/app/temp/components/ContactLarge";
 import { FooterLarge } from "@/app/temp/components/FooterLarge";
 import { TOCIndexDynamic } from "@/app/temp/components/TOCIndexDynamic";
 import { NavBar } from "@/app/temp/components/NavBar";
-import { getPSIMetrics } from "@/lib/psi";
+import { getLiveCardData } from "@/lib/psi";
 
 export default async function TempPage() {
-  const metrics = await getPSIMetrics();
+  const liveData = await getLiveCardData();
+  const region   = process.env.VERCEL_REGION;
+  const git = {
+    branch:  process.env.VERCEL_GIT_COMMIT_REF     ?? "dev",
+    commit:  (process.env.VERCEL_GIT_COMMIT_SHA ?? "b446c81").slice(0, 7),
+    message: process.env.VERCEL_GIT_COMMIT_MESSAGE  ?? "TOC LCP LL Fix 1",
+  };
 
   return (
     <main className="bg-[#080808]">
       <NavBar />
-      <HeroLarge metrics={metrics} />
+      <HeroLarge liveData={liveData} region={region} git={git} />
       <TextMarquee />
       <TOCIndexDynamic />
       <div id="toc-passion"><PassionLarge /></div>
