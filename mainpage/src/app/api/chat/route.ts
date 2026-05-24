@@ -2,14 +2,6 @@ import Anthropic from "@anthropic-ai/sdk";
 import OpenAI from "openai";
 import { NextRequest } from "next/server";
 
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
-
-const openAIClient = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 const SYSTEM_PROMPT = `You are Billy Zhang's personal AI assistant, embedded in his portfolio website. Your role is to help visitors learn about Billy in a friendly, concise, and informative way.
 
 About Billy Zhang:
@@ -56,6 +48,9 @@ export async function POST(req: NextRequest) {
   const messages: { role: "user" | "assistant"; content: string }[] =
     body.messages ?? [];
   const provider: "claude" | "openai" = body.provider ?? "claude";
+
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  const openAIClient = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
   const stream = new ReadableStream({
     async start(controller) {
