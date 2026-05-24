@@ -1,43 +1,35 @@
-import HeroLarge from "@/app/temp/components/HeroLarge";
-import PassionLarge from "@/app/temp/components/PassionLarge";
-import ChatBotLarge from "@/app/temp/components/ChatBotLarge";
-import TextMarquee from "@/app/components/TextMarquee";
-import { AboutLarge } from "@/app/temp/components/AboutLarge";
-import { ProjectsLarge } from "@/app/temp/components/ProjectsLarge";
-import { ServicesLarge } from "@/app/temp/components/ServicesLarge";
-import { TechStackLarge } from "@/app/temp/components/TechStackLarge";
-import { JourneyLarge } from "@/app/temp/components/JourneyLarge";
-import { ContactLarge } from "@/app/temp/components/ContactLarge";
-import { FooterLarge } from "@/app/temp/components/FooterLarge";
-import { TOCIndexDynamic } from "@/app/temp/components/TOCIndexDynamic";
-import { NavBar } from "@/app/temp/components/NavBar";
-import { getLiveCardData } from "@/lib/psi";
+import Header from "@/app/components/Header";
+import Background from "@/app/about/founders/portfolios/0/components/Background";
+import LandingHero from "@/app/components/LandingHero";
+import Passion from "@/app/about/founders/portfolios/0/components/Passion";
+import ChatBot from "@/app/about/founders/portfolios/0/components/ChatBot";
+import BrandBar from "@/app/components/BrandBar";
+import About from "@/app/about/founders/portfolios/0/components/About";
+import { Projects } from "@/app/about/founders/portfolios/0/components/Projects";
+import { Services } from "@/app/about/founders/portfolios/0/components/Services";
+import { TechStack } from "@/app/about/founders/portfolios/0/components/TechStack";
+import { Journey } from "@/app/about/founders/portfolios/0/components/Journey";
+import { Contact } from "@/app/about/founders/portfolios/0/components/Contact";
+import { Footer } from "@/app/about/founders/portfolios/0/components/Footer";
 
-export default async function TempPage() {
-  const liveData = await getLiveCardData();
-  const region   = process.env.VERCEL_REGION;
-  const git = {
-    branch:  process.env.VERCEL_GIT_COMMIT_REF     ?? "dev",
-    commit:  (process.env.VERCEL_GIT_COMMIT_SHA ?? "b446c81").slice(0, 7),
-    message: process.env.VERCEL_GIT_COMMIT_MESSAGE  ?? "TOC LCP LL Fix 1",
-  };
-
+export default function TempPage() {
   return (
-    <main className="bg-[#080808]">
-      <NavBar />
-      <HeroLarge liveData={liveData} region={region} git={git} />
-      <TextMarquee />
-      <TOCIndexDynamic />
-      <div id="toc-passion"><PassionLarge /></div>
-      <div id="toc-chatbot"><ChatBotLarge /></div>
-      <div id="toc-about"><AboutLarge /></div>
-      <div id="toc-projects"><ProjectsLarge /></div>
-      <div id="toc-process"><ServicesLarge /></div>
-      <div id="toc-techstack"><TechStackLarge /></div>
-      {/* <div id="toc-journey"><JourneyLarge /></div> */}
-      {/* <ScrollHero /> */}
-      <div id="toc-contact"><ContactLarge /></div>
-      <FooterLarge />
+    <main>
+      <Header />
+      <section className="relative overflow-hidden">
+        <Background />
+        <LandingHero />
+        <Passion />
+        <ChatBot />
+        <BrandBar />
+        <About />
+        <Projects />
+        <Services />
+        <TechStack />
+        <Journey />
+        <Contact />
+      </section>
+      <Footer />
     </main>
   );
 }
