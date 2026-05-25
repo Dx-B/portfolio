@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "PowerShell(vercel --version)",
+      "Bash(dir \"c:\\\\Users\\\\Billy\\\\Documents\\\\VSC\\\\Portfolio\\\\portfolio\\\\mainpage\\\\src\\\\app\\\\\")"
+    ]
+  }
+}
