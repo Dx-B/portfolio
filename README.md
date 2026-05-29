@@ -22,7 +22,7 @@ Personal portfolio built with Next.js, featuring live Lighthouse metrics, an AI 
 
 ## Project Structure
 
-/
+```
 ├── src/
 │   ├── app/
 │   │   ├── temp/components/   # Active portfolio UI (HeroLarge, NavBar, TOCIndex, etc.)
@@ -41,6 +41,7 @@ Personal portfolio built with Next.js, featuring live Lighthouse metrics, an AI 
 │   ├── brands/                # Tech stack SVG icons
 │   └── projects/              # Project screenshots
 └── vercel.json
+```
 
 ## Deployed on Vercel
 - Find main URL @ https://www.billyzhang.dev
