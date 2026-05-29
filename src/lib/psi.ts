@@ -4,7 +4,10 @@ import { type LiveCardData, LIVE_FALLBACK } from "./psi-types";
 export type { LiveCardData };
 export { LIVE_FALLBACK };
 
-const redis = Redis.fromEnv();
+const redis = new Redis({
+  url:   process.env.KV_REST_API_URL!,
+  token: process.env.KV_REST_API_TOKEN!,
+});
 
 export async function getLiveCardData(): Promise<LiveCardData> {
   try {
