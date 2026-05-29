@@ -53,11 +53,11 @@ export function ContactLarge() {
               </div>
 
               <div className="flex flex-col gap-3 sm:flex-row md:shrink-0">
-                <button className="group inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-medium text-black transition hover:bg-white/90">
+                <button className="group cursor-pointer inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-medium text-black transition hover:bg-white/90">
                   Hire Me
                   <BsArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </button>
-                <button className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 px-5 py-3 text-sm text-white/60 transition hover:border-white/20 hover:text-white">
+                <button className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-white/10 px-5 py-3 text-sm text-white/60 transition hover:border-white/20 hover:text-white">
                   <BsEnvelope className="h-4 w-4" />
                   Message
                 </button>
@@ -91,7 +91,7 @@ export function ContactLarge() {
               />
               <div className="flex justify-end md:col-span-2">
                 <button type="submit"
-                  className="group inline-flex items-center gap-2 rounded-xl border border-white/10 px-5 py-3 text-sm text-white/60 transition hover:border-white/20 hover:text-white">
+                  className="group cursor-pointer inline-flex items-center gap-2 rounded-xl border border-white/10 px-5 py-3 text-sm text-white/60 transition hover:border-white/20 hover:text-white">
                   Send
                   <BsSend className="h-4 w-4 transition group-hover:translate-x-1" />
                 </button>

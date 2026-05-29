@@ -30,14 +30,14 @@ const footerSections = [
       { label: "Resume", href: "/resume" },
       { label: "Contact", href: "/contact" },
       { label: "Notes", href: "/notes" },
-      { label: "GitHub", href: "https://github.com/yourusername", external: true },
+      { label: "GitHub", href: "https://github.com/Dx-B", external: true },
     ],
   },
 ];
 
 const socialLinks = [
-  { label: "GitHub", href: "https://github.com/yourusername", icon: BsGithub },
-  { label: "LinkedIn", href: "https://linkedin.com/in/yourusername", icon: BsLinkedin },
+  { label: "GitHub", href: "https://github.com/Dx-B", icon: BsGithub },
+  { label: "LinkedIn", href: "https://linkedin.com/in/billy-zhang-dx", icon: BsLinkedin },
   { label: "Email", href: "mailto:billyzhangdx@gmail.com", icon: BsEnvelope },
 ];
 

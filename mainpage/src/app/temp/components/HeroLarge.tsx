@@ -315,12 +315,13 @@ export default function HeroLarge({ liveData, region, git }: { liveData?: LiveCa
   };
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center px-8 py-24 md:px-16">
-      <div className="w-full max-w-6xl min-h-132">
-        <div className="grid gap-12 xl:grid-cols-2 xl:gap-20 xl:items-start">
+    <div className="relative flex min-h-screen justify-center px-8 pb-24 md:px-16" style={{ paddingTop: "max(6rem, calc(50vh - 350px))" }}>
+
+      <div className="w-full max-w-6xl" style={{ height: "clamp(600px, calc(100vh - 192px), 700px)" }}>
+        <div className="h-full grid gap-12 xl:grid-cols-2 xl:grid-rows-1 xl:gap-20">
 
           {/* Left — identity + CTAs */}
-          <div className="flex flex-col">
+          <div className="flex h-full flex-col justify-center">
             <span className="mb-5 text-[11px] uppercase tracking-[0.22em] text-white/25">Hey there!</span>
 
             <h1 className="text-5xl font-bold tracking-tight text-white md:text-6xl xl:text-7xl leading-[1.1]">
@@ -379,8 +380,8 @@ export default function HeroLarge({ liveData, region, git }: { liveData?: LiveCa
             </div>
           </div>
 
-          {/* Right — branded metrics card (md+) */}
-          <div className="hidden md:block">
+          {/* Right — BuildCard, flex-centered so it grows symmetrically from center */}
+          <div className="hidden md:flex h-full flex-col justify-center">
             <BuildCard liveData={data} region={region} git={git} />
           </div>
 

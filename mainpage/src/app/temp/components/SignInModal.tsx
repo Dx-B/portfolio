@@ -80,7 +80,7 @@ export function SignInModal({ isOpen, onClose }: SignInModalProps) {
   const labelClass =
     "block text-[10px] uppercase tracking-[0.18em] text-white/40 mb-2";
   const primaryBtn =
-    "w-full rounded-xl bg-linear-to-r from-[#818cf8] via-[#a855f7] to-[#ec4899] p-px disabled:opacity-40 disabled:cursor-not-allowed";
+    "w-full rounded-xl cursor-pointer bg-linear-to-r from-[#818cf8] via-[#a855f7] to-[#ec4899] p-px disabled:opacity-40 disabled:cursor-not-allowed";
 
   return (
     <AnimatePresence>
@@ -109,7 +109,7 @@ export function SignInModal({ isOpen, onClose }: SignInModalProps) {
             {/* Close */}
             <button
               onClick={handleClose}
-              className="absolute top-4 right-4 text-white/25 hover:text-white/60 transition-colors"
+              className="absolute cursor-pointer top-4 right-4 text-white/25 hover:text-white/60 transition-colors"
               aria-label="Close"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -148,7 +148,7 @@ export function SignInModal({ isOpen, onClose }: SignInModalProps) {
                   <button
                     onClick={signInWithGoogle}
                     disabled={isLoading}
-                    className="w-full flex items-center justify-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white/75 transition-colors hover:bg-white/[0.08] hover:text-white mb-5 disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="w-full cursor-pointer flex items-center justify-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white/75 transition-colors hover:bg-white/[0.08] hover:text-white mb-5 disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     <svg width="15" height="15" viewBox="0 0 24 24">
                       <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
