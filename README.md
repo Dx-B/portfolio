@@ -1,6 +1,6 @@
 # Billy Zhang — Portfolio
 
-Personal portfolio built with Next.js, featuring live Lighthouse metrics, an AI chatbot, and a full blog platform with authentication.
+Personal portfolio built with Next.js, featuring live Lighthouse metrics, an AI chatbot, and a full blog platform with authentication. 
 
 ## Stack
 
@@ -45,3 +45,4 @@ Personal portfolio built with Next.js, featuring live Lighthouse metrics, an AI 
 
 ## Deployed on Vercel
 - Find main URL @ https://www.billyzhang.dev
+- hehe
