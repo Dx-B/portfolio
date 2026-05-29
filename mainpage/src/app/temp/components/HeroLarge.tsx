@@ -315,7 +315,7 @@ export default function HeroLarge({ liveData, region, git }: { liveData?: LiveCa
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-8 py-24 md:px-16">
+    <div className="relative flex min-h-screen items-center justify-center px-8 py-24 md:px-16">
       <div className="w-full max-w-6xl min-h-132">
         <div className="grid gap-12 xl:grid-cols-2 xl:gap-20 xl:items-start">
 
@@ -396,7 +396,7 @@ export default function HeroLarge({ liveData, region, git }: { liveData?: LiveCa
       `}</style>
       <button
         onClick={scrollToContact}
-        className="absolute bottom-10 left-1/2 flex flex-col items-center gap-2 cursor-pointer group"
+        className="absolute bottom-6 md:bottom-10 left-1/2 flex flex-col items-center gap-2 cursor-pointer group"
         style={{ animation: "chev-pulse 2.4s ease-in-out infinite" }}
         aria-label="Scroll to explore"
       >

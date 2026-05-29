@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import HeroLarge from "@/app/temp/components/HeroLarge";
 import PassionLarge from "@/app/temp/components/PassionLarge";
 import ChatBotLarge from "@/app/temp/components/ChatBotLarge";
@@ -10,11 +11,26 @@ import { ContactLarge } from "@/app/temp/components/ContactLarge";
 import { FooterLarge } from "@/app/temp/components/FooterLarge";
 import { TOCIndexDynamic } from "@/app/temp/components/TOCIndexDynamic";
 import { NavBar } from "@/app/temp/components/NavBar";
-import { getLiveCardData } from "@/lib/psi";
+import { getLiveCardData, LIVE_FALLBACK, type LiveCardData } from "@/lib/psi";
 
-export default async function Home() {
-  const liveData = await getLiveCardData();
-  const region   = process.env.VERCEL_REGION;
+type GitInfo = { branch: string; commit: string; message: string };
+
+async function HeroStream({
+  promise,
+  region,
+  git,
+}: {
+  promise: Promise<LiveCardData>;
+  region?: string;
+  git?: GitInfo;
+}) {
+  const liveData = await promise;
+  return <HeroLarge liveData={liveData} region={region} git={git} />;
+}
+
+export default function Home() {
+  const liveDataPromise = getLiveCardData();
+  const region = process.env.VERCEL_REGION;
   const git = {
     branch:  process.env.VERCEL_GIT_COMMIT_REF     ?? "dev",
     commit:  (process.env.VERCEL_GIT_COMMIT_SHA ?? "b446c81").slice(0, 7),
@@ -24,7 +40,9 @@ export default async function Home() {
   return (
     <main className="bg-[#080808]">
       <NavBar />
-      <HeroLarge liveData={liveData} region={region} git={git} />
+      <Suspense fallback={<HeroLarge liveData={LIVE_FALLBACK} region={region} git={git} />}>
+        <HeroStream promise={liveDataPromise} region={region} git={git} />
+      </Suspense>
       <TextMarquee />
       <TOCIndexDynamic />
       <div id="toc-passion"><PassionLarge /></div>

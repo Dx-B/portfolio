@@ -207,6 +207,12 @@ function SpiderLayout() {
 
   return (
     <div ref={containerRef} className="w-full">
+      <style>{`
+        @keyframes toc-breathe    { 0%,100%{opacity:0.13} 50%{opacity:0.32} }
+        @keyframes toc-pulse-soft { 0%,100%{opacity:0.10} 50%{opacity:0.36} }
+        @keyframes toc-glow-main  { 0%,100%{opacity:0.45} 50%{opacity:0.88} }
+        @keyframes toc-glow-sub   { 0%,100%{opacity:0.28} 50%{opacity:0.58} }
+      `}</style>
       <svg
         viewBox="0 0 900 660"
         preserveAspectRatio="xMidYMid meet"
@@ -241,18 +247,13 @@ function SpiderLayout() {
             stroke="rgba(255,255,255,0.06)" strokeWidth={1.5} strokeLinecap="square" />
         ))}
 
-        {/* ── Ambient breathing traces — no filter; opacity raised to compensate */}
-        {introComplete && SPIDER_TRACES.map((d, i) => (
-          <motion.path key={`ag${i}`} d={d} fill="none"
+        {/* ── Ambient breathing traces — CSS animation */}
+        {SPIDER_TRACES.map((d, i) => (
+          <path key={`ag${i}`} d={d} fill="none"
             stroke={`url(#sg${i})`} strokeWidth={1.5} strokeLinecap="square"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: [0.13, 0.32, 0.13] }}
-            transition={{
-              duration: 3.2 + i * 0.22,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: i * 0.18,
-            }}
+            style={introComplete
+              ? { opacity: 0, animation: `toc-breathe ${3.2 + i * 0.22}s ease-in-out ${i * 0.18}s infinite` }
+              : { opacity: 0 }}
           />
         ))}
 
@@ -335,15 +336,14 @@ function SpiderLayout() {
           fill="rgba(255,255,255,0.78)" fontSize={15} fontWeight="700" fontFamily="inherit">
           What&apos;s next?
         </text>
-        {/* Pulsing hint — slow breath signals "waiting for input" */}
-        <motion.text x={450} y={354} textAnchor="middle"
+        {/* Pulsing hint — CSS animation */}
+        <text x={450} y={354} textAnchor="middle"
           fill="rgba(255,255,255,0.18)" fontSize={9} fontFamily="inherit"
           pointerEvents="none"
-          animate={{ opacity: [0.1, 0.36, 0.1] }}
-          transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+          style={{ animation: "toc-pulse-soft 2.4s ease-in-out infinite" }}
         >
           select a section
-        </motion.text>
+        </text>
 
         {/* ── Section nodes */}
         {SECTIONS.map((sec, i) => {
@@ -406,22 +406,16 @@ function SpiderLayout() {
                 strokeLinecap="square"
                 style={{ transition: "stroke-width 0.2s, stroke-opacity 0.2s" }}
               />
-              {/* Persistent ambient glow on entry side — top 3 only; Projects brightest */}
+              {/* Persistent ambient glow on entry side — CSS animation */}
               {IMPORTANT.has(i) && (
-                <motion.path
+                <path
                   d={entry}
                   fill="none"
                   stroke={`url(#sg${i})`}
                   strokeWidth={i === 0 ? 1 : 1.5}
                   strokeLinecap="square"
                   filter="url(#spider-glow)"
-                  animate={{ opacity: i === 0 ? [0.45, 0.88, 0.45] : [0.28, 0.58, 0.28] }}
-                  transition={{
-                    duration: i === 0 ? 2.2 : 2.8,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: i === 7 ? 0.9 : 0,
-                  }}
+                  style={{ animation: `${i === 0 ? "toc-glow-main" : "toc-glow-sub"} ${i === 0 ? 2.2 : 2.8}s ease-in-out ${i === 7 ? 0.9 : 0}s infinite` }}
                 />
               )}
               {/* Pulse flash — full-outline gradient that fades to 0 on arrival */}

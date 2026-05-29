@@ -46,7 +46,7 @@ export function NavBar() {
         </button>
 
         {/* Center links */}
-        <div className="flex items-center gap-7">
+        <div className="hidden md:flex items-center gap-7">
           {NAV_LINKS.map(({ label, id, priority }) => (
             <button
               key={id}
