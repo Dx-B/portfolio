@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "PowerShell(vercel --version)",
+      "Bash(dir \"c:\\\\Users\\\\Billy\\\\Documents\\\\VSC\\\\Portfolio\\\\portfolio\\\\mainpage\\\\src\\\\app\\\\\")",
+      "PowerShell(git -C \"c:\\\\Users\\\\Billy\\\\Documents\\\\VSC\\\\Portfolio\\\\portfolio\" log --oneline -8)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\Billy\\\\Documents\\\\VSC\\\\Portfolio\\\\portfolio\\\\mainpage\\\\src\" -Recurse -File)",
+      "Bash(Select-Object FullName)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\Billy\\\\Documents\\\\VSC\\\\Portfolio\\\\portfolio\\\\mainpage\" -Recurse -File)",
+      "Bash(Select-Object -First 50)",
+      "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\Billy\\\\Documents\\\\VSC\\\\Portfolio\\\\portfolio\\\\mainpage\" -Recurse -Directory | Select-Object -First 30 | ForEach-Object { $_.FullName })"
+    ]
+  }
+}
