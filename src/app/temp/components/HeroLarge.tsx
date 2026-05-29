@@ -3,8 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import type { LiveCardData } from "@/lib/psi";
-import { LIVE_FALLBACK } from "@/lib/psi";
+import { type LiveCardData, LIVE_FALLBACK } from "@/lib/psi-types";
 
 const L = ({ d, children }: { d: number; children: React.ReactNode }) => (
   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.18, delay: d }}>
